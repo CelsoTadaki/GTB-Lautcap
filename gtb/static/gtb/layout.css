@@ -1,0 +1,107 @@
+body {
+    padding: 10px;
+    background-color: #d2e5ff;
+}
+
+.error {
+    font: 10px;
+    color: rgb(219, 71, 71);
+}
+
+.bids {
+    display: flex;
+    flex-direction: row;
+    gap: 100px;
+}
+
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loginRegisterBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 15px;
+}
+
+
+
+
+
+
+
+
+.logo {
+    width: 30%;
+}
+
+.logoDiv {
+    padding-bottom: 10px;
+}
+
+.homeRegistrar {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    background-color: white;
+    border-radius: 10px;
+    width: 100%;
+    padding: 30px;
+}
+
+.botoesRegistrar {
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    gap: 20px;
+}
+
+.botaoRegistraPessoaFisica {
+    background-color: #05132a;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    padding: 20px;
+    font-size: 20px;
+}
+
+.botaoRegistraPessoaJuridica {
+    background-color: #0b2859;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    padding: 20px;
+    font-size: 20px;
+}
+
+.nav {
+    padding-left: 20%;
+    padding-right: 20%;
+    padding-top: 5%;
+}
+
+.homeLoginRegistrar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+}
+
+.loginRegistra {
+    display: flex;
+    flex-direction: row;
+}
+
+.botaoRegistra {
+    background-color: #195ab4;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+}
+
+

@@ -1,0 +1,47 @@
+<div>
+    <h3>{{ listing.title }}</h3>
+</div>
+<div class="listing">
+    <div class="imageDiv">
+        <img src={{ listing.image }} alt="image of the listing">
+    </div>  
+
+    <div class="bidDetails">
+
+        {% comment %} For active listings, show current bid. {% endcomment %}
+        {% if listing.status %}
+            <div class="greenText">
+                <h5>Current Bid: </h5>
+                <h5 class="money"> ${{ listing.bidValue }}</h5>
+            </div>
+        
+        {% comment %} For closed listings, which can either have no winner or be sold. {% endcomment %}
+        {% elif not listing.status%}
+            <div class="greenText">
+                
+                {% comment %} If current user is the winner of auction. {% endcomment %}
+                {% if listing.winner == user %}
+                    <h5>Sold at:</h5>
+                    <h5 class="money">${{ listVar.bidValue }}</h5>
+                    <h5 class="winner">(You Are The Winner!)</h5> 
+
+                {% comment %} If current user is not the winner of the auction. {% endcomment %}
+                {% elif listing.winner %}
+                    <h5>Sold at:</h5>
+                    <h5 class="money">${{ listVar.bidValue }}</h5>
+                    <h5 class="winner">(Winner: {{ listVar.winner.displayName }})</h5> 
+
+                {% comment %} In case a user has closed the listing before anyone else 
+                could bid on it. {% endcomment %}
+                {% elif not listing.winner and listing.user == user %}
+                    <h5 class="noWinner">No winner, you closed the listing.</h5>
+                {% else %}
+                    <h5 class="noWinner">No winner, listing closed by {{ listVar.user.displayName }}.</h5>
+                {% endif %}
+            </div>
+            
+        {% endif %}
+        <p>{{ listing.description }}</p>
+        <h6>By {{ listing.user.displayName }} in {{ listing.category.name }}</h6>
+    </div>
+</div>

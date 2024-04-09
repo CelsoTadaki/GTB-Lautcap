@@ -1,0 +1,27 @@
+{% extends "gtb/layout.html" %}
+{% load filter %}
+{% load static %}
+
+{% block title %}Closed Listings{% endblock %}
+
+{% block head %}
+    <link href="{% static 'gtb/listings.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <h2>Closed Listings</h2>
+    <br>
+    {% for listVar in listings %}
+        {% comment %} Checking for closed listings {% endcomment %}
+        {% if not listVar.status %}
+            <a href="{% url 'listingPage' title=listVar.title|titleToSlug id=listVar.id %}" class="no-link-style">
+                <div class="topBorder">
+
+                    {% include "gtb/listingsDetails.html" with listing=listVar %}
+                    
+                </div>
+            </a>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}

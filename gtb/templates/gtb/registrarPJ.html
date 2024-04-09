@@ -1,0 +1,47 @@
+{% extends "gtb/layout.html" %}
+{% load static %}
+
+{% block title %}Criar Conta Pessoa Jurídica{% endblock %}
+
+{% block body %}
+
+    <h2>Criar Conta Pessoa Jurídica</h2>
+
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+    <form action="{% url 'registrarPJ' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control" autofocus type="text" name="username" placeholder="Nome de usuário">
+        </div>
+        <div class="form-group">
+            <input class="form-control" autofocus type="text" name="nome_da_empresa" placeholder="Nome da Empresa">
+        </div>
+        <div class="form-group">
+            <input class="form-control" autofocus type="text" name="setor" placeholder="Setor">
+        </div>
+        <div class="form-group">
+            <input class="form-control" autofocus type="text" name="CNPJ" placeholder="CPF (somente números)">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="email" name="email" placeholder="E-mail ">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="text" name="telefone" placeholder="Telefone">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" name="senha" placeholder="Senha">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" name="confirmacao" placeholder="Confirme a Senha">
+        </div>
+        <div class="loginRegisterBtn">
+            <input class="btn btn-primary" type="submit" value="Registrar">
+        </div>
+    </form>
+
+    Já tem uma conta? <a href="{% url 'login' %}">Entre Agora</a>
+
+{% endblock %}

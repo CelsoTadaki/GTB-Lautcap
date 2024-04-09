@@ -1,0 +1,45 @@
+{% extends "gtb/layout.html" %}
+{% load static %}
+
+{% block title %}New Listing{% endblock %}
+
+{% block head %}
+    <link href="{% static 'gtb/newListing.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <h2>New Listing</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="{{ message.tags }}">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+
+    <form action="{% url 'newListing' %}" method="post">
+        {% csrf_token %}
+        <div>
+            <input class="titleInput" type="text" name="title" placeholder="Title">
+            <input class="bidInput" type="number" name="bid" placeholder="Starting Bid ($)">
+
+            <select class="categoryStyle" name="category">
+                <option value="" disabled selected>Category</option>
+                {% for categoryVar in category %}
+                    <option value="{{ categoryVar.name }}">{{ categoryVar.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <input class="imageInput" type="text" name="image" placeholder="Image">
+        </div>
+
+        <div>
+            <textarea name="description" placeholder="Description" rows="10" cols="90"></textarea>
+        </div>
+
+        <div class="button">
+            <button type="submit">Create Listing</button>
+        <div>
+    </form>
+{% endblock %}

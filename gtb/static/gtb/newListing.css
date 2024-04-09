@@ -1,0 +1,37 @@
+.titleInput {
+    margin-bottom: 10px;
+    width: 300px;
+}
+
+.bidInput {
+    margin-bottom: 10px;
+    margin-left: 20px;
+    width: 150px;
+}
+
+.categoryStyle {
+    margin-bottom: 10px;
+    margin-left: 20px;
+    width: 210px;
+}
+
+.button {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.button button {
+    border-radius: 5px;
+}
+
+.imageInput {
+    width: 710px;
+    margin-bottom: 10px;
+}
+
+textarea {
+    max-width: 70vw;
+    max-height: 50vh;
+}

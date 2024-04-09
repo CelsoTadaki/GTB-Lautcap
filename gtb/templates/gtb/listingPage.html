@@ -1,0 +1,74 @@
+{% extends "gtb/layout.html" %}
+{% load filter %}
+{% load static %}
+
+{% block title %}{{ listing.title }}{% endblock %}
+
+{% block head %}
+    <link href="{% static 'gtb/listings.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+
+    {% include "gtb/listingsDetails.html" %}
+
+    {% if user.is_authenticated %}
+    
+        {% if messages %}
+            {% for message in messages %}
+                <h3 class="{{ message.tags }}">{{ message }}</h3>
+            {% endfor %}
+        {% endif %}
+
+        <form action="{% url 'listingPage' title=listing.title|titleToSlug id=listing.id %}" method="post">
+            <div class="formDiv">
+                {% csrf_token %}
+                
+                {% comment %} A user that created a listing will only be able 
+                to close the listing. {% endcomment %}
+                {% if listing.user.displayName == user.displayName and listing.status %}
+                    <button class="button" type="submit" name="closeListing">Close Listing</button>
+                {% elif not listing.status %}
+                    {% comment %} For users not logged in, which will only be able to see
+                    the listing details and do nothing else with it. {% endcomment %}
+                {% else %}
+
+                    {% comment %} Checking if the current listing is in users watch list, 
+                    which will display the corrent buttons accordingly. {% endcomment %}
+                    {% if listing in user.userWatchlist.all %}
+                        <input type="hidden" name="id" value={{ listing.id }}>
+                        <button class="button" type="submit" name="removeFromWatchlist">Remove from Watchlist</button>
+                    {% else %}
+                        <button class="button" type="submit" name="addWatchlist">Add to Watchlist</button>
+                    {% endif %}
+
+                    <input class="bidInput" type="number" name="bidAmount" placeholder="Bid Amount">
+                    <button class="button" type="submit" name="bidButton">Bid</button>
+                {% endif %}
+
+            </div>
+
+            {% comment %} Enabling comments for active listings. {% endcomment %}
+            {% if listing.status %}
+                <div class="commentDiv">
+                    <textarea name="comment" placeholder="Write a comment" rows="5" cols="60"></textarea>
+                    <button class="button" type="submit" name="commentButton">Post Comment</button>
+                </div>
+            {% endif %}
+        </form>
+
+        {% comment %} Displaying comments for listings that are active. {% endcomment %}
+        {% if listing.comment.all and listing.status %}
+            {% for comment in listing.comment.all reversed %}
+
+                <div class="commentText">
+                    <div><b>{{ comment.user.displayName }}:</b></div>
+                    <div >{{ comment.text }}</div>  
+                </div>
+
+            {% endfor %}
+        {% endif %}
+
+    {% endif %}
+
+{% endblock %}

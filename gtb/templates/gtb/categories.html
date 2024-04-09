@@ -1,0 +1,50 @@
+{% extends "gtb/layout.html" %}
+{% load filter %}
+{% load static %}
+
+{% block title %}Categories{% endblock %}
+
+{% block head %}
+    <link href="{% static 'gtb/listings.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <form action="{% url 'categories' %}" method="post">
+        {% csrf_token %}
+        <div class="filter">
+            <div>
+                <h2>Filter by</h2>
+            </div>
+
+            <div>
+                <select class="categoryStyle" name="category">
+                    {% comment %} Lists all categories by their name, as their are in the database {% endcomment %}
+                    <option value="" disabled selected>Category</option>
+                    {% for categoryVar in category %}
+                        <option value="{{ categoryVar.name }}">{{ categoryVar.name }}</option>
+                    {% endfor %}
+            
+                </select>
+            </div>
+
+            <div>
+                <button type="submit" class="button">Search</button>
+            </div>
+            
+        </div>
+    </form>
+
+    {% for listVar in listings %}
+        {% comment %} Only active listings are gonna show {% endcomment %}
+        {% if listVar.status %}
+            <a href="{% url 'listingPage' title=listVar.title|titleToSlug id=listVar.id %}" class="no-link-style">
+                <div class="topBorder">
+
+                    {% include "gtb/listingsDetails.html" with listing=listVar %}
+
+                </div>
+            </a>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}
