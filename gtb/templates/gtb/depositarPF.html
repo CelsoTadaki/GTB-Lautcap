@@ -1,0 +1,97 @@
+{% extends "gtb/layout.html" %}
+{% load filter %}
+{% load static %}
+
+{% block title %}GTB Lautpac{% endblock %}
+
+
+{% block body %}
+    {% if cliente %}
+        {% if user.is_pessoaFisica %}
+            <div class="header">
+                <div class="logoDivheader">
+                    <img src="{% static 'gtb/btg.png' %}" class="logoheader">
+                </div>
+                
+            </div>
+            <div class="info">
+                <p>Olá, <b>{{ cliente.nome_completo }}</b>!<br>
+                Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
+                <p> Você é uma Pessoa Física </p>
+            </div>
+            <div class="info">
+                <h2>Seus dados</h2>
+                Seu CPF é: {{ cliente.CPF }} <br>
+                Seu telefone é: {{ cliente.telefone }} <br>
+                Seu email é: {{ user.email }} <br>
+            </div>
+            <div class="info">
+                <h2>Deposito</h2>
+                <form action="{% url 'fazerdepositoPF' %}" method="post">
+                    {% csrf_token %}
+                    <div>
+                        <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
+                    </div>
+                    <div class="button">
+                        <button type="submit">Depositar</button>
+                    <div>
+                </form>
+            </div>
+        {% else %}
+            <div class="header">
+                <div class="logoDivheader">
+                    <img src="{% static 'gtb/btg.png' %}" class="logoheader">
+                </div>
+                
+            </div>
+            <div class="info">
+                <p>Olá, <b>{{ cliente.nome_da_empresa }}</b>!<br>
+                Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
+                <p> Você é uma Pessoa Jurídica </p>
+            </div>
+            <div class="info">
+                <h2>Seus dados</h2>
+                Sua empresa é: {{ cliente.nome_da_empresa }} <br>
+                Seu setor é: {{ cliente.setor }} <br>
+                Seu CNPJ é: {{ cliente.CNPJ }} <br>
+                Seu telefone é: {{ cliente.telefone }} <br>
+                Seu email é: {{ user.email }} <br>
+            </div>
+        {% endif %}
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+        </li>
+
+    {% else %}
+        <div class="nav">
+            <div class="homeLoginRegistrar">
+                <div class="logoDiv">
+                    <img src="{% static 'gtb/btg.png' %}" class="logo">
+                </div>
+        
+                <div class="Registra">
+                    <a href="{% url 'login' %}">
+                        <input class="botaoRegistra" type="submit" value="Entrar">
+                    </a>
+                </div>
+            </div>
+            <div class="homeRegistrar">
+                <h2> <b>Cadastre-se hoje gratuitamente</b> </h2>
+                <h3> Selecione o tipo de conta que você quer criar </h3>
+        
+                <div class= "botoesRegistrar">
+                    <a href="{% url 'registrarPF' %}">
+                        <input class="botaoRegistraPessoaFisica" type="submit" value="Eu sou Pessoa Física">
+                    </a>
+                    <a href="{% url 'registrarPJ' %}">
+                        <input class="botaoRegistraPessoaJuridica" type="submit" value="Eu sou Pessoa Jurídica">
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+    
+    
+{% endblock %}

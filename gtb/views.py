@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.conf import settings
+from django.db import connection
 
 from . import models
 
@@ -138,51 +139,91 @@ def registrarPJ(request):
 
     
 @login_required
-def newListing(request):
+def fazerdepositoPF(request):
     if request.method == "POST":
         # Getting all info from request.
-        title = request.POST["title"]
-        description = request.POST["description"]
-        bid = request.POST["bid"]
-        image = request.POST["image"]
-        categoryName = request.POST.get("category")
-
+        valor = request.POST["valor"]
         # Error handling and some edge cases
-        if not title:
-            messages.error(request, "New listing must have a title!")
-            return render(request, "gtb/newListing.html", {
-                "category": models.category.objects.all()
-            })
-        if not categoryName:
-            messages.error(request, "New listing must have a category!")
-            return render(request, "gtb/newListing.html", {
-                "category": models.category.objects.all()
-            })
-        elif not bid:
-            bid = 0
-        elif not image:
-            image = "https://tinyurl.com/4wrmfwj2"
+        if not valor:
+            messages.error(request, "Insira o valor")
+            cliente = models.PessoaFisica.objects.get(user=request.user)  
             
-        # Create new listing
+            return render(request, "gtb/depositarPF.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+            
         currentUser = request.user
-        category = models.category.objects.get(name=categoryName)
-        currentUser.userListings.create(user=currentUser,
-            title=title,
-            description=description,
-            bidValue=bid,  
-            image=image,
-            category=category,
-        )
 
-        return render(request, "gtb/home.html", {
-            "user": currentUser,
-            "listings": models.listings.objects.all().order_by('-id'),
+        # Sample raw SQL query
+        sql_query = """
+        UPDATE gtb_pessoafisica
+        SET saldo_da_conta = saldo_da_conta + %s
+        WHERE user_id = %s
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query, [valor, currentUser.id])
+
+        connection.commit()
+
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/depositarPF.html", {
+            "user": request.user,
+            "cliente": cliente
         })
 
     else:
-        print(request.user)
-        return render(request, "gtb/newListing.html", {
-            "category": models.category.objects.all()
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/depositarPF.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+    
+@login_required
+def fazersaquePF(request):
+    if request.method == "POST":
+        # Getting all info from request.
+        valor = request.POST["valor"]
+        # Error handling and some edge cases
+        if not valor:
+            messages.error(request, "Insira o valor")
+            cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+            return render(request, "gtb/saquePF.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+            
+        currentUser = request.user
+
+        # Sample raw SQL query
+        sql_query = """
+        UPDATE gtb_pessoafisica
+        SET saldo_da_conta = saldo_da_conta - %s
+        WHERE user_id = %s
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query, [valor, currentUser.id])
+
+        connection.commit()
+
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/saquePF.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+
+    else:
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/saquePF.html", {
+            "user": request.user,
+            "cliente": cliente
         })
 
 def listingPage(request, title, id):
