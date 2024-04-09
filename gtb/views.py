@@ -135,7 +135,7 @@ def registrarPJ(request):
             })
     else:
         return render(request, "gtb/registrarPJ.html")
-    
+
     
 @login_required
 def newListing(request):

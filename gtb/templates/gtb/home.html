@@ -8,20 +8,43 @@
 {% block body %}
     {% if cliente %}
         {% if user.is_pessoaFisica %}
-            Você é Pessoa Física <br>
-            Seu nome é: {{ cliente.nome_completo }} <br>
-            Seu CPF é: {{ cliente.CPF }} <br>
-            Seu telefone é: {{ cliente.telefone }} <br>
-            Seu email é: {{ user.email }} <br>
-            Seu Saldo em conta é: {{ cliente.saldo_da_conta }} <br>
+            <div class="header">
+                <div class="logoDivheader">
+                    <img src="{% static 'gtb/btg.png' %}" class="logoheader">
+                </div>
+                
+            </div>
+            <div class="info">
+                <p>Olá, <b>{{ cliente.nome_completo }}</b>!<br>
+                Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
+                <p> Você é uma Pessoa Física </p>
+            </div>
+            <div class="info">
+                <h2>Seus dados</h2>
+                Seu CPF é: {{ cliente.CPF }} <br>
+                Seu telefone é: {{ cliente.telefone }} <br>
+                Seu email é: {{ user.email }} <br>
+            </div>
         {% else %}
-            Você é Pessoa Juridica <br>
-            Sua empresa é: {{ cliente.nome_da_empresa }} <br>
-            Seu setor é: {{ cliente.setor }} <br>
-            Seu CNPJ é: {{ cliente.CNPJ }} <br>
-            Seu telefone é: {{ cliente.telefone }} <br>
-            Seu email é: {{ user.email }} <br>
-            Seu Saldo em conta é: {{ cliente.saldo_da_conta }} <br>
+            <div class="header">
+                <div class="logoDivheader">
+                    <img src="{% static 'gtb/btg.png' %}" class="logoheader">
+                </div>
+                
+            </div>
+            <div class="info">
+                <p>Olá, <b>{{ cliente.nome_da_empresa }}</b>!<br>
+                Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
+                <p> Você é uma Pessoa Jurídica </p>
+            </div>
+            <div class="info">
+                <h2>Seus dados</h2>
+                Sua empresa é: {{ cliente.nome_da_empresa }} <br>
+                Seu setor é: {{ cliente.setor }} <br>
+                Seu CNPJ é: {{ cliente.CNPJ }} <br>
+                Seu telefone é: {{ cliente.telefone }} <br>
+                Seu email é: {{ user.email }} <br>
+            </div>
         {% endif %}
 
         <li class="nav-item">
