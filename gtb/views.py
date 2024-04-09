@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.conf import settings
 from django.db import connection
+from datetime import datetime
 
 from . import models
 
@@ -148,7 +149,7 @@ def fazerdepositoPF(request):
             messages.error(request, "Insira o valor")
             cliente = models.PessoaFisica.objects.get(user=request.user)  
             
-            return render(request, "gtb/depositarPF.html", {
+            return render(request, "gtb/depositar.html", {
                 "user": request.user,
                 "cliente": cliente
             })
@@ -169,7 +170,7 @@ def fazerdepositoPF(request):
 
         cliente = models.PessoaFisica.objects.get(user=request.user)  
             
-        return render(request, "gtb/depositarPF.html", {
+        return render(request, "gtb/depositar.html", {
             "user": request.user,
             "cliente": cliente
         })
@@ -177,7 +178,7 @@ def fazerdepositoPF(request):
     else:
         cliente = models.PessoaFisica.objects.get(user=request.user)  
             
-        return render(request, "gtb/depositarPF.html", {
+        return render(request, "gtb/depositar.html", {
             "user": request.user,
             "cliente": cliente
         })
@@ -192,7 +193,7 @@ def fazerdepositoPJ(request):
             messages.error(request, "Insira o valor")
             cliente = models.PessoaJuridica.objects.get(user=request.user)  
             
-            return render(request, "gtb/depositarPF.html", {
+            return render(request, "gtb/depositar.html", {
                 "user": request.user,
                 "cliente": cliente
             })
@@ -213,7 +214,7 @@ def fazerdepositoPJ(request):
 
         cliente = models.PessoaJuridica.objects.get(user=request.user)  
             
-        return render(request, "gtb/depositarPF.html", {
+        return render(request, "gtb/depositar.html", {
             "user": request.user,
             "cliente": cliente
         })
@@ -221,7 +222,7 @@ def fazerdepositoPJ(request):
     else:
         cliente = models.PessoaJuridica.objects.get(user=request.user)  
             
-        return render(request, "gtb/depositarPF.html", {
+        return render(request, "gtb/depositar.html", {
             "user": request.user,
             "cliente": cliente
         })
@@ -236,7 +237,7 @@ def fazersaquePF(request):
             messages.error(request, "Insira o valor")
             cliente = models.PessoaFisica.objects.get(user=request.user)  
             
-            return render(request, "gtb/saquePF.html", {
+            return render(request, "gtb/saque.html", {
                 "user": request.user,
                 "cliente": cliente
             })
@@ -245,7 +246,7 @@ def fazersaquePF(request):
 
         # Sample raw SQL query
         sql_query = """
-        UPDATE gtb_pessoajuridica
+        UPDATE gtb_pessoafisica
         SET saldo_da_conta = saldo_da_conta - %s
         WHERE user_id = %s
         """
@@ -257,7 +258,7 @@ def fazersaquePF(request):
 
         cliente = models.PessoaFisica.objects.get(user=request.user)  
             
-        return render(request, "gtb/saquePF.html", {
+        return render(request, "gtb/saque.html", {
             "user": request.user,
             "cliente": cliente
         })
@@ -265,10 +266,272 @@ def fazersaquePF(request):
     else:
         cliente = models.PessoaFisica.objects.get(user=request.user)  
             
-        return render(request, "gtb/saquePF.html", {
+        return render(request, "gtb/saque.html", {
             "user": request.user,
             "cliente": cliente
         })
+    
+@login_required
+def transferenciaPFparaPJ(request):
+    print("hello")
+    if request.method == "POST":
+        # Getting all info from request.
+        valor = request.POST["valor"]
+        CNPJ_dest = request.POST["CNPJ"]
+        # Error handling and some edge cases
+        if not valor:
+            messages.error(request, "Insira o valor")
+            cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+            return render(request, "gtb/transferenciaparaPJ.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+        if not CNPJ_dest:
+            messages.error(request, "Insira CNPJ")
+            cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+            return render(request, "gtb/transferenciaparaPJ.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+            
+        currentUser = request.user
+
+        sql_query_pf = """
+        UPDATE gtb_pessoafisica
+        SET saldo_da_conta = saldo_da_conta - %s
+        WHERE user_id = %s;
+        """
+        
+        # Second SQL query to update PessoaJuridica
+        sql_query_pj = """
+        UPDATE gtb_pessoajuridica
+        SET saldo_da_conta = saldo_da_conta + %s
+        WHERE CNPJ = %s;
+        """
+        sql_query_historico = """
+            INSERT INTO gtb_historicotransferencias (horario, valor, recebeu, tipo_recebe, enviou, tipo_envia)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        
+        
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query_pf, [valor, currentUser.id])
+            cursor.execute(sql_query_pj, [valor, CNPJ_dest])
+            cursor.execute(sql_query_historico, [datetime.now(), valor, CNPJ_dest, 'PJ', currentUser.id, 'PF'])
+        connection.commit()
+
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+        return render(request, "gtb/transferenciaparaPJ.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+
+    else:
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/transferenciaparaPJ.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+
+@login_required
+def transferenciaPFparaPF(request):
+    if request.method == "POST":
+        # Getting all info from request.
+        valor = request.POST["valor"]
+        CPF_dest = request.POST["CPF"]
+        # Error handling and some edge cases
+        if not valor:
+            messages.error(request, "Insira o valor")
+            cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+            return render(request, "gtb/transferenciaparaPF.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+        if not CPF_dest:
+            messages.error(request, "Insira CPF")
+            cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+            return render(request, "gtb/transferenciaparaPF.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+            
+        currentUser = request.user
+
+        sql_query_pf = """
+        UPDATE gtb_pessoafisica
+        SET saldo_da_conta = saldo_da_conta - %s
+        WHERE user_id = %s;
+        """
+        
+        # Second SQL query to update PessoaJuridica
+        sql_query_pj = """
+        UPDATE gtb_pessoafisica
+        SET saldo_da_conta = saldo_da_conta + %s
+        WHERE CPF = %s;
+        """
+        sql_query_historico = """
+            INSERT INTO gtb_historicotransferencias (horario, valor, recebeu, tipo_recebe, enviou, tipo_envia)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query_pf, [valor, currentUser.id])
+            cursor.execute(sql_query_pj, [valor, CPF_dest])
+            cursor.execute(sql_query_historico, [datetime.now(), valor, CPF_dest, 'PF', currentUser.id, 'PF'])
+
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+        connection.commit()
+
+            
+        return render(request, "gtb/transferenciaparaPF.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+
+    else:
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/transferenciaparaPF.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+    
+
+@login_required
+def transferenciaPJparaPF(request):
+    if request.method == "POST":
+        # Getting all info from request.
+        valor = request.POST["valor"]
+        CPF_dest = request.POST["CPF"]
+        # Error handling and some edge cases
+        if not valor:
+            messages.error(request, "Insira o valor")
+            cliente = models.PessoaJuridica.objects.get(user=request.user)  
+            
+            return render(request, "gtb/transferenciaparaPF.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+        if not CPF_dest:
+            messages.error(request, "Insira CPF")
+            cliente = models.PessoaJuridica.objects.get(user=request.user)  
+            
+            return render(request, "gtb/transferenciaparaPF.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+            
+        currentUser = request.user
+
+        sql_query_pf = """
+        UPDATE gtb_pessoajuridica
+        SET saldo_da_conta = saldo_da_conta - %s
+        WHERE user_id = %s;
+        """
+        
+        # Second SQL query to update PessoaJuridica
+        sql_query_pj = """
+        UPDATE gtb_pessoafisica
+        SET saldo_da_conta = saldo_da_conta + %s
+        WHERE CPF = %s;
+        """
+        sql_query_historico = """
+            INSERT INTO gtb_historicotransferencias (horario, valor, recebeu, tipo_recebe, enviou, tipo_envia)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query_pf, [valor, currentUser.id])
+            cursor.execute(sql_query_pj, [valor, CPF_dest])
+            cursor.execute(sql_query_historico, [datetime.now(), valor, CPF_dest, 'PJ', currentUser.id, 'PF'])
+
+        cliente = models.PessoaJuridica.objects.get(user=request.user)  
+        connection.commit()
+
+            
+        return render(request, "gtb/transferenciaparaPF.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+
+    else:
+        cliente = models.PessoaJuridica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/transferenciaparaPF.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+    
+@login_required
+def transferenciaPJparaPJ(request):
+    if request.method == "POST":
+        # Getting all info from request.
+        valor = request.POST["valor"]
+        CNPJ_dest = request.POST["CNPJ"]
+        # Error handling and some edge cases
+        if not valor:
+            messages.error(request, "Insira o valor")
+            cliente = models.PessoaJuridica.objects.get(user=request.user)  
+            
+            return render(request, "gtb/transferenciaparaPJ.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+        if not CNPJ_dest:
+            messages.error(request, "Insira CNPJ")
+            cliente = models.PessoaJuridica.objects.get(user=request.user)  
+            
+            return render(request, "gtb/transferenciaparaPJ.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+            
+        currentUser = request.user
+
+        sql_query_pf = """
+        UPDATE gtb_pessoajuridica
+        SET saldo_da_conta = saldo_da_conta - %s
+        WHERE user_id = %s;
+        """
+        
+        # Second SQL query to update PessoaJuridica
+        sql_query_pj = """
+        UPDATE gtb_pessoajuridica
+        SET saldo_da_conta = saldo_da_conta + %s
+        WHERE CNPJ = %s;
+        """
+        sql_query_historico = """
+            INSERT INTO gtb_historicotransferencias (horario, valor, recebeu, tipo_recebe, enviou, tipo_envia)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query_pf, [valor, currentUser.id])
+            cursor.execute(sql_query_pj, [valor, CNPJ_dest])
+            cursor.execute(sql_query_historico, [datetime.now(), valor, CNPJ_dest, 'PJ', currentUser.id, 'PJ'])
+
+        cliente = models.PessoaJuridica.objects.get(user=request.user)  
+        connection.commit()
+
+            
+        return render(request, "gtb/transferenciaparaPJ.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+
+    else:
+        cliente = models.PessoaJuridica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/transferenciaparaPJ.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+
 
 @login_required
 def fazersaquePJ(request):
@@ -280,7 +543,7 @@ def fazersaquePJ(request):
             messages.error(request, "Insira o valor")
             cliente = models.PessoaJuridica.objects.get(user=request.user)  
             
-            return render(request, "gtb/saquePF.html", {
+            return render(request, "gtb/saque.html", {
                 "user": request.user,
                 "cliente": cliente
             })
@@ -301,7 +564,7 @@ def fazersaquePJ(request):
 
         cliente = models.PessoaJuridica.objects.get(user=request.user)  
             
-        return render(request, "gtb/saquePF.html", {
+        return render(request, "gtb/saque.html", {
             "user": request.user,
             "cliente": cliente
         })
@@ -309,7 +572,7 @@ def fazersaquePJ(request):
     else:
         cliente = models.PessoaJuridica.objects.get(user=request.user)  
             
-        return render(request, "gtb/saquePF.html", {
+        return render(request, "gtb/saque.html", {
             "user": request.user,
             "cliente": cliente
         })

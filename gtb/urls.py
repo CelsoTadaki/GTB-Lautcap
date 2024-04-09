@@ -12,6 +12,11 @@ urlpatterns = [
     path("fazersaquePF", views.fazersaquePF, name="fazersaquePF"),
     path("fazerdepositoPJ", views.fazerdepositoPJ, name="fazerdepositoPJ"),
     path("fazersaquePJ", views.fazersaquePJ, name="fazersaquePJ"),
+    path("transferenciaPFparaPJ", views.transferenciaPFparaPJ, name="transferenciaPFparaPJ"),
+    path("transferenciaPFparaPF", views.transferenciaPFparaPF, name="transferenciaPFparaPF"),
+    path("transferenciaPJparaPF", views.transferenciaPJparaPF, name="transferenciaPJparaPF"),
+    path("transferenciaPJparaPJ", views.transferenciaPJparaPJ, name="transferenciaPJparaPJ"),
+    
     # path("new-listing/", views.newListing, name="newListing"),
     path("<slug:title>/<int:id>/", views.listingPage, name="listingPage"),
     path("watchlist/", views.watchlist, name="watchlist"),
