@@ -183,6 +183,50 @@ def fazerdepositoPF(request):
         })
     
 @login_required
+def fazerdepositoPJ(request):
+    if request.method == "POST":
+        # Getting all info from request.
+        valor = request.POST["valor"]
+        # Error handling and some edge cases
+        if not valor:
+            messages.error(request, "Insira o valor")
+            cliente = models.PessoaJuridica.objects.get(user=request.user)  
+            
+            return render(request, "gtb/depositarPF.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+            
+        currentUser = request.user
+
+        # Sample raw SQL query
+        sql_query = """
+        UPDATE gtb_pessoajuridica
+        SET saldo_da_conta = saldo_da_conta + %s
+        WHERE user_id = %s
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query, [valor, currentUser.id])
+
+        connection.commit()
+
+        cliente = models.PessoaJuridica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/depositarPF.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+
+    else:
+        cliente = models.PessoaJuridica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/depositarPF.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+    
+@login_required
 def fazersaquePF(request):
     if request.method == "POST":
         # Getting all info from request.
@@ -201,7 +245,7 @@ def fazersaquePF(request):
 
         # Sample raw SQL query
         sql_query = """
-        UPDATE gtb_pessoafisica
+        UPDATE gtb_pessoajuridica
         SET saldo_da_conta = saldo_da_conta - %s
         WHERE user_id = %s
         """
@@ -220,6 +264,50 @@ def fazersaquePF(request):
 
     else:
         cliente = models.PessoaFisica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/saquePF.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+
+@login_required
+def fazersaquePJ(request):
+    if request.method == "POST":
+        # Getting all info from request.
+        valor = request.POST["valor"]
+        # Error handling and some edge cases
+        if not valor:
+            messages.error(request, "Insira o valor")
+            cliente = models.PessoaJuridica.objects.get(user=request.user)  
+            
+            return render(request, "gtb/saquePF.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+            
+        currentUser = request.user
+
+        # Sample raw SQL query
+        sql_query = """
+        UPDATE gtb_pessoajuridica
+        SET saldo_da_conta = saldo_da_conta - %s
+        WHERE user_id = %s
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query, [valor, currentUser.id])
+
+        connection.commit()
+
+        cliente = models.PessoaJuridica.objects.get(user=request.user)  
+            
+        return render(request, "gtb/saquePF.html", {
+            "user": request.user,
+            "cliente": cliente
+        })
+
+    else:
+        cliente = models.PessoaJuridica.objects.get(user=request.user)  
             
         return render(request, "gtb/saquePF.html", {
             "user": request.user,

@@ -50,12 +50,16 @@
                 <p> Você é uma Pessoa Jurídica </p>
             </div>
             <div class="info">
-                <h2>Seus dados</h2>
-                Sua empresa é: {{ cliente.nome_da_empresa }} <br>
-                Seu setor é: {{ cliente.setor }} <br>
-                Seu CNPJ é: {{ cliente.CNPJ }} <br>
-                Seu telefone é: {{ cliente.telefone }} <br>
-                Seu email é: {{ user.email }} <br>
+                <h2>Deposito</h2>
+                <form action="{% url 'fazerdepositoPJ' %}" method="post">
+                    {% csrf_token %}
+                    <div>
+                        <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
+                    </div>
+                    <div class="button">
+                        <button type="submit">Depositar</button>
+                    <div>
+                </form>
             </div>
         {% endif %}
 
