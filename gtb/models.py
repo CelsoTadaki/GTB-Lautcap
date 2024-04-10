@@ -16,8 +16,7 @@ class PessoaFisica(models.Model):
     nome_completo   = models.CharField(max_length=64, null=False, blank=False)
     telefone        = models.CharField(max_length=8, null=False, blank=False)
     saldo_da_conta  = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False)
-    # USERNAME_FIELD  = 'CPF'
-    # REQUIRED_FIELDS = ['CPF', 'nome_completo', 'telefone']
+
     def __str__(self):
         return f"{self.CPF}"
 
@@ -29,8 +28,7 @@ class PessoaJuridica(models.Model):
     telefone         = models.CharField(max_length=8, null=False, blank=False)
     setor            = models.CharField(max_length=64, null=False, blank=False)
     saldo_da_conta   = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False)
-    # USERNAME_FIELD   = 'CNPJ'
-    # REQUIRED_FIELDS  = ['CPF', 'nome_da_empresa', 'telefone', 'setor', 'saldo_da_conta']
+
     def __str__(self):
         return f"{self.CNPJ}"
 
@@ -39,7 +37,7 @@ class Emprestimo(models.Model):
     tipo               = models.CharField(max_length=64, null=False, blank=False)
     CPF_CNPJ           = models.CharField(max_length=15, null=False, blank=False)
     valor              = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False)
-    dias_ate_vencimento = 30
+    dias_ate_vencimento = models.IntergerField(null=False, blank=False, default=30)
     vencimento         = models.DateTimeField(default=datetime.now() + timedelta(days=dias_ate_vencimento))
     data_de_emprestimo = models.DateTimeField(auto_now_add=True)
     def __str__(self):
