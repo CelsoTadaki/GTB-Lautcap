@@ -43,7 +43,7 @@
             </div>
 
         {% endif %}
-        {% if home %}
+        {% if home and not user.is_authenticated %}
             <div class="nav">
                 <div class="homeLoginRegistrar">
                     <div class="logoDiv">
