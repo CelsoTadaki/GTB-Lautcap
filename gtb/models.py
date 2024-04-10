@@ -28,7 +28,7 @@ class PessoaJuridica(models.Model):
     nome_da_empresa  = models.CharField(max_length=64, null=False, blank=False)
     telefone         = models.CharField(max_length=8, null=False, blank=False)
     setor            = models.CharField(max_length=64, null=False, blank=False)
-    saldo_da_conta   = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False)
+    saldo_da_conta   = models.FloatField(default=0, null=False, blank=False)
 
     def __str__(self):
         return f"{self.CNPJ}"
@@ -37,7 +37,7 @@ class Emprestimo(models.Model):
     """Classe destinada a entidade empréstimo"""
     tipo               = models.CharField(max_length=64, null=False, blank=False)
     CPF_CNPJ           = models.CharField(max_length=15, null=False, blank=False)
-    valor              = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False)
+    valor              = models.FloatField(default=0, null=False, blank=False)
     dias_ate_vencimento = models.IntegerField(null=False, blank=False, default=30)
     vencimento         = models.DateTimeField(default=(datetime.now() + timedelta(days=30)))
     data_de_emprestimo = models.DateTimeField(auto_now_add=True)
@@ -71,7 +71,7 @@ class GerentePJ(models.Model):
 class HistoricoCompraEVendaAcoes(models.Model):
     """Classe destinada a entidade histórico das compras e venda de ações"""
     horario    = models.DateTimeField(auto_now_add=True) 
-    valor      = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False)
+    valor      = models.FloatField(default=0, null=False, blank=False)
     nome_acao  = models.CharField(max_length=64, null=False, blank=False)
     quantidade = models.IntegerField(default=0, null=False, blank=False) 
 
@@ -81,7 +81,7 @@ class HistoricoCompraEVendaAcoes(models.Model):
 class HistoricoTransferencias(models.Model):
     """Classe destinada a entidade histórico das transferências"""
     horario     = models.DateTimeField(auto_now_add=True)
-    valor       = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False)
+    valor       = models.FloatField(default=0, null=False, blank=False)
     recebeu     = models.CharField(max_length=64, null=False, blank=False) # quem recebeu
     tipo_recebe = models.CharField(max_length=64, null=False, blank=False)
     enviou      = models.CharField(max_length=64, null=False, blank=False) # quem enviou
