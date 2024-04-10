@@ -309,7 +309,17 @@ def acoes(request):
             acoes = apiCall.json()
             cliente = models.PessoaFisica.objects.get(user=user)
             saldo = cliente.saldo_da_conta
-            precoTotal = float(quantidade)*float(acoes['stocks'][0]['close'])
+            try:
+                precoTotal = float(quantidade)*float(acoes['stocks'][0]['close'])
+            except:
+                messages.error(request, "Acão Inválida")
+                apiCall = requests.get('https://brapi.dev/api/quote/list?sortBy=volume&limit=20&token=eJGEyu8vVHctULdVdHYzQd')
+                acoes = apiCall.json()
+                return render(request, "gtb/acoes.html", {
+                    "user": user,
+                    "cliente": cliente,
+                    "acoes": acoes
+                })
             if float(saldo) < precoTotal:
                 messages.error(request, "Saldo insuficiente")
                 apiCall = requests.get('https://brapi.dev/api/quote/list?sortBy=volume&limit=20&token=eJGEyu8vVHctULdVdHYzQd')
@@ -318,7 +328,7 @@ def acoes(request):
                     "cliente": cliente,
                     "acoes": acoes
                 })
-
+            
             acaoComprada = models.HistoricoCompraEVendaAcoes.objects.create(valor=precoTotal, 
                                                                             nome_acao=acoes['stocks'][0]['name'], 
                                                                             quantidade=quantidade)
@@ -333,6 +343,7 @@ def acoes(request):
                 "cliente": cliente,
                 "acoes": acoes
             })
+            
             
             
         cliente = models.PessoaFisica.objects.get(user=user)  
