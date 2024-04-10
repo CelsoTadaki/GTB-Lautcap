@@ -176,7 +176,6 @@ def listingPage(request, title, id):
             "user": request.user,
             "listing": models.listings.objects.get(id=id)
         })
-        
 
 @login_required  
 def watchlist(request): 
@@ -228,3 +227,33 @@ def categories(request):
             "listings": models.listings.objects.all().order_by('-id'),
             "category": models.category.objects.all()
         })
+
+#OBS: NÃO 
+@login_required
+def getTransactions(request):
+    if request.method == "POST":
+        user = request.user
+        # Sample raw SQL query
+        sql_query = """
+        SELECT * FROM HistoricoTransferencias
+        WHERE recebeu = %s OR enviou = %s
+        """
+
+        rows = cursor.fetchall()
+
+        # Convert rows to a list of dictionaries
+        results = []
+        for row in rows:
+            result = {
+                'id': row[0],
+                'horario': row[1],
+                'valor': row[2],
+                'recebeu': row[3],
+                'tipo_recebe': row[4],
+                'enviou': row[5],
+                'tipo_envia': row[6],
+            }
+            results.append(result)
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query, [user, user])

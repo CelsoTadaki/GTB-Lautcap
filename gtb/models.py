@@ -74,6 +74,8 @@ class HistoricoCompraEVendaAcoes(models.Model):
     valor      = models.FloatField(default=0, null=False, blank=False)
     nome_acao  = models.CharField(max_length=64, null=False, blank=False)
     quantidade = models.IntegerField(default=0, null=False, blank=False) 
+    user_id    = models.PositiveIntegerField(null=True)
+
 
     def __str__(self):
         return f"{self.nome_acao}"

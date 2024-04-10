@@ -10,16 +10,16 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     
     
-    # pessoa fisica
+    # Pessoa Fisica
     path("registrar_pessoa_fisica", viewsPF.registrarPF, name="registrarPF"),
     path("fazerdepositoPF", viewsPF.fazerdepositoPF, name="fazerdepositoPF"),
     path("fazersaquePF", viewsPF.fazersaquePF, name="fazersaquePF"),
     path("acoes", viewsPF.acoes, name="acoes"),
     path("transferenciaPFparaPJ", viewsPF.transferenciaPFparaPJ, name="transferenciaPFparaPJ"),
     path("transferenciaPFparaPF", viewsPF.transferenciaPFparaPF, name="transferenciaPFparaPF"),
+    path("historicoacoes", viewsPF.historicoacoes, name="historicoacoes"),
     
-    
-    # pesso juridica
+    # Pessoa Juridica
     path("registrar_pessoa_juridica", viewsPJ.registrarPJ, name="registrarPJ"),
     path("fazerdepositoPJ", viewsPJ.fazerdepositoPJ, name="fazerdepositoPJ"),
     path("fazersaquePJ", views.fazersaquePJ, name="fazersaquePJ"),

@@ -37,6 +37,7 @@
                 {% endif %}
                 {% if user.is_pessoaFisica %}
                     <a href="{% url 'acoes' %}">Ações</a>
+                    <a href="{% url 'historicoacoes' %}">Minhas Ações</a>
                 {% endif %}
                 <a href="{% url 'home' %}">Home</a>
                 <a href="{% url 'logout' %}">Log Out</a>

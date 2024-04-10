@@ -1,0 +1,66 @@
+{% extends "gtb/layout.html" %}
+{% load filter %}
+{% load static %}
+
+{% block title %}Ações{% endblock %}
+
+{% block head %}
+    <link href="{% static 'gtb/acoes.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="{{ message.tags }}">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+
+    <form action="{% url 'acoes' %}" method="post">
+        <div class="formDiv">
+            {% csrf_token %}
+            <div class="divComprarAcoes">
+                <input class="textoProcurarAcao" type="text" name="comprarAcao" placeholder="Nome do Ticker">
+                <input class="textoQuantidadeAcao" type="number" name="quantidadeAcao" placeholder="Quantidade">
+                <button class="botaoProcurarAcao" type="submit" name="botaoComprarAcao">Comprar</button>
+            </div>
+            <div class="botoesAcoes">
+                <div class="procurarDiv">
+                    <input class="textoProcurarAcao" type="text" name="procurarAcao" placeholder="Nome do Ticker">
+                    <button class="botaoProcurarAcao" type="submit" name="botaoProcurarAcao">Procurar</button>
+                </div>
+                
+                <div>
+                    <a href="{% url 'home' %}">
+                        <input class="botaoHome" type="submit" value="Home" name="botaoHome">
+                    </a>
+                </div>
+            </div>
+
+        
+
+        <div class="tableDiv">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ação</th>
+                        <th>Valor</th>
+                        <th>Volume</th>
+                        <th>Horario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for acao in acoes %}
+                        <tr>
+                            <td>{{ acao.nome }}</td>
+                            <td>R$ {{ acao.valor }}</td>
+                            <td>{{ acao.volume }}</td>
+                            <td>{{ acao.horario }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </form>
+
+{% endblock %}

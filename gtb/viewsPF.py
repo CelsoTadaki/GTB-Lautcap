@@ -331,7 +331,7 @@ def acoes(request):
             
             acaoComprada = models.HistoricoCompraEVendaAcoes.objects.create(valor=precoTotal, 
                                                                             nome_acao=acoes['stocks'][0]['name'], 
-                                                                            quantidade=quantidade)
+                                                                            quantidade=quantidade, user_id=user.id)
             acaoComprada.save()
             cliente.saldo_da_conta = cliente.saldo_da_conta - precoTotal
             cliente.user_acoes.add(acaoComprada)
@@ -364,3 +364,39 @@ def acoes(request):
             "cliente": cliente,
             "acoes": acoes
         })
+    
+@login_required
+def historicoacoes(request):
+    sql_query_pf = """
+        SELECT * FROM gtb_historicocompraevendaacoes WHERE user_id = %s
+    """
+
+    # Execute SQL query
+    with connection.cursor() as cursor:
+        cursor.execute(sql_query_pf, [request.user.id])
+        # Fetch all rows from the result
+        result_set = cursor.fetchall()
+    acoesPesquisa = []
+    for row in result_set:
+        linha = [row[0], row[1].strftime('%Y/%m/%d %H:%M:%S'), row[2], row[3], row[4], row[5]]
+        acoesPesquisa.append(linha)
+
+    acoes = []
+
+    for pesquisa in acoesPesquisa:
+        # Create a new dictionary for each iteration
+        acao_temp = {
+            "nome": pesquisa[2],
+            "valor": pesquisa[4],
+            "volume": pesquisa[3],
+            "horario": pesquisa[1]
+        }
+        acoes.append(acao_temp)
+
+    cliente = models.PessoaFisica.objects.get(user=request.user)  
+    print(acoes)
+    return render(request, "gtb/historicoacoes.html", {
+        "user": request.user,
+        "cliente": cliente,
+        "acoes": acoes
+    })  
