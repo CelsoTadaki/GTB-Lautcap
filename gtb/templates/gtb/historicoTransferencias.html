@@ -2,97 +2,44 @@
 {% load filter %}
 {% load static %}
 
-{% block title %}GTB Lautpac{% endblock %}
+{% block title %}Ações{% endblock %}
 
+{% block head %}
+    <link href="{% static 'gtb/acoes.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block body %}
-    {% if cliente %}
-        {% if historicoTransferencia %}
-            <div class="header">
-                <div class="logoDivheader">
-                    <img src="{% static 'gtb/btg.png' %}" class="logoheader">
-                </div>
-            </div>        
-            <div class="info">
-                <p>Seu histórico de transferências está abaixo<br></p>
-                {% if historicoTransferencia.enviou == cliente.user_name %} 
-                    <p>Voce enviou <b>R${{ historicoTransferencia.valor }}<b> para 
-                        <b>{{historicoTransferencia.recebeu}}<br></b></p>
-            </div>
-        <div class="info">
-            <h2>Seus dados</h2>
-            Seu CPF é: {{ cliente.CPF }} <br>
-            Seu telefone é: {{ cliente.telefone }} <br>
-            Seu email é: {{ user.email }} <br>
-        </div>
-        <div class="info">
-            <h2>Saque</h2>
-            <form action="{% url 'fazersaquePF' %}" method="post">
-                {% csrf_token %}
-                <div>
-                    <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
-                </div>
-                <div class="button">
-                    <button type="submit">Sacar</button>
-                <div>
-            </form>
-        </div>
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="{{ message.tags }}">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
 
-        <div class="header">
-            <div class="logoDivheader">
-                <img src="{% static 'gtb/btg.png' %}" class="logoheader">
-            </div>
-            
+    <form action="{% url 'historicoacoes' %}" method="post">
+        <div class="formDiv">
+        <div class="tableDiv">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Horario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for acao in acoes %}
+                        <tr>
+                            <td>{{ acao.id }}</td>
+                            <td>{{ acao.tipo }}</td>
+                            <td>R$ {{ acao.valor }}</td>
+                            <td>{{ acao.horario }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="info">
-            <p>Olá, <b>{{ cliente.nome_da_empresa }}</b>!<br>
-            Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
-            <p> Você é uma Pessoa Jurídica </p>
         </div>
-        <div class="info">
-            <h2>Saque</h2>
-            <form action="{% url 'fazersaquePJ' %}" method="post">
-                {% csrf_token %}
-                <div>
-                    <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
-                </div>
-                <div class="button">
-                    <button type="submit">Sacar</button>
-                <div>
-            </form>
-        </div>
+    </form>
 
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-        </li>
-
-    <div class="nav">
-        <div class="homeLoginRegistrar">
-            <div class="logoDiv">
-                <img src="{% static 'gtb/btg.png' %}" class="logo">
-            </div>
-    
-            <div class="Registra">
-                <a href="{% url 'login' %}">
-                    <input class="botaoRegistra" type="submit" value="Entrar">
-                </a>
-            </div>
-        </div>
-        <div class="homeRegistrar">
-            <h2> <b>Cadastre-se hoje gratuitamente</b> </h2>
-            <h3> Selecione o tipo de conta que você quer criar </h3>
-    
-            <div class= "botoesRegistrar">
-                <a href="{% url 'registrarPF' %}">
-                    <input class="botaoRegistraPessoaFisica" type="submit" value="Eu sou Pessoa Física">
-                </a>
-                <a href="{% url 'registrarPJ' %}">
-                    <input class="botaoRegistraPessoaJuridica" type="submit" value="Eu sou Pessoa Jurídica">
-                </a>
-            </div>
-        </div>
-    </div>
-
-    
-    
 {% endblock %}

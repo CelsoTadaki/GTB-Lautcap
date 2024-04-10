@@ -446,3 +446,59 @@ def historicoacoes(request):
             "cliente": cliente,
             "acoes": acoes
         })  
+
+@login_required
+def historicotransferencias(request):
+    enviou = """
+        SELECT * FROM gtb_historicotransferencias WHERE enviou = %s
+    """
+    recebeu = """
+        SELECT * FROM gtb_historicotransferencias WHERE recebeu = (SELECT CPF FROM gtb_pessoafisica WHERE user_id = %s)
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(enviou, [request.user.id])
+        result_enviou = cursor.fetchall()
+
+        cursor.execute(recebeu, [request.user.id])
+        result_recebeu = cursor.fetchall()
+    enviou = []
+    for row in result_enviou:
+        linha = [row[0], row[1].strftime('%Y/%m/%d %H:%M:%S'), row[2], row[3], row[4], row[5], row[6]]
+        enviou.append(linha)
+    
+    recebeu = []
+    acoes = []
+    print(result_recebeu)
+    for row in result_recebeu:
+        linha = [row[0], row[1].strftime('%Y/%m/%d %H:%M:%S'), row[2], row[3], row[4], row[5], row[6]]
+        recebeu.append(linha)
+
+    for pesquisa in enviou:
+        # Create a new dictionary for each iteration
+        acao_temp = {
+            "id": pesquisa[0],
+            "horario": pesquisa[1],
+            "valor": pesquisa[6],
+            "tipo": "Enviou",
+        }
+        acoes.append(acao_temp)
+
+    
+    for pesquisa in recebeu:
+        # Create a new dictionary for each iteration
+        acao_temp = {
+            "id": pesquisa[0],
+            "horario": pesquisa[1],
+            "valor": pesquisa[6],
+            "tipo": "Recebeu",
+        }
+        acoes.append(acao_temp)
+
+    cliente = models.PessoaFisica.objects.get(user=request.user)  
+    print(acoes)
+    return render(request, "gtb/historicoTransferencias.html", {
+        "user": request.user,
+        "cliente": cliente,
+        "acoes": acoes
+    })  

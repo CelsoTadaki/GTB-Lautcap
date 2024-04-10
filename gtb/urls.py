@@ -18,6 +18,8 @@ urlpatterns = [
     path("transferenciaPFparaPJ", viewsPF.transferenciaPFparaPJ, name="transferenciaPFparaPJ"),
     path("transferenciaPFparaPF", viewsPF.transferenciaPFparaPF, name="transferenciaPFparaPF"),
     path("historicoacoes", viewsPF.historicoacoes, name="historicoacoes"),
+    path("historicotransferenciasPF", viewsPF.historicotransferencias, name="historicotransferenciasPF"),
+    path("historicotransferenciasPJ", viewsPJ.historicotransferencias, name="historicotransferenciasPJ"),
     
     # Pessoa Juridica
     path("registrar_pessoa_juridica", viewsPJ.registrarPJ, name="registrarPJ"),
