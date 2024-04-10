@@ -15,33 +15,19 @@
         {% endfor %}
     {% endif %}
 
-    <form action="{% url 'acoes' %}" method="post">
+    <form action="{% url 'historicoacoes' %}" method="post">
         <div class="formDiv">
             {% csrf_token %}
             <div class="divComprarAcoes">
-                <input class="textoProcurarAcao" type="text" name="comprarAcao" placeholder="Nome do Ticker">
-                <input class="textoQuantidadeAcao" type="number" name="quantidadeAcao" placeholder="Quantidade">
-                <button class="botaoProcurarAcao" type="submit" name="botaoComprarAcao">Comprar</button>
+                <input class="textoProcurarAcao" type="text" name="venderAcao" placeholder="Nome do Ticker">
+                <button class="botaoProcurarAcao" type="submit" name="botaoVenderAcao">Vender</button>
             </div>
-            <div class="botoesAcoes">
-                <div class="procurarDiv">
-                    <input class="textoProcurarAcao" type="text" name="procurarAcao" placeholder="Nome do Ticker">
-                    <button class="botaoProcurarAcao" type="submit" name="botaoProcurarAcao">Procurar</button>
-                </div>
-                
-                <div>
-                    <a href="{% url 'home' %}">
-                        <input class="botaoHome" type="submit" value="Home" name="botaoHome">
-                    </a>
-                </div>
-            </div>
-
-        
 
         <div class="tableDiv">
             <table>
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Ação</th>
                         <th>Valor</th>
                         <th>Volume</th>
@@ -51,6 +37,7 @@
                 <tbody>
                     {% for acao in acoes %}
                         <tr>
+                            <td>{{ acao.id }}</td>
                             <td>{{ acao.nome }}</td>
                             <td>R$ {{ acao.valor }}</td>
                             <td>{{ acao.volume }}</td>

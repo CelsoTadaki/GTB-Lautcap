@@ -334,7 +334,6 @@ def acoes(request):
                                                                             quantidade=quantidade, user_id=user.id)
             acaoComprada.save()
             cliente.saldo_da_conta = cliente.saldo_da_conta - precoTotal
-            cliente.user_acoes.add(acaoComprada)
             cliente.save()
             
             messages.success(request, "Compra Feita com Sucesso!")
@@ -367,36 +366,83 @@ def acoes(request):
     
 @login_required
 def historicoacoes(request):
-    sql_query_pf = """
-        SELECT * FROM gtb_historicocompraevendaacoes WHERE user_id = %s
-    """
+    if request.method == "POST":
+        acaoVender = request.POST["venderAcao"]
+        
+        sql_query_pf = """
+            SELECT * FROM gtb_historicocompraevendaacoes WHERE user_id = %s
+        """
+        sql_reembolso = """
+            UPDATE gtb_pessoafisica
+            SET saldo_da_conta = saldo_da_conta + (SELECT valor FROM gtb_historicocompraevendaacoes WHERE id = %s) * (SELECT quantidade FROM gtb_historicocompraevendaacoes WHERE id = %s)
+            WHERE user_id = %s
+        """
+        sql_delete = """
+            DELETE FROM gtb_historicocompraevendaacoes WHERE id = %s;
+        """
 
-    # Execute SQL query
-    with connection.cursor() as cursor:
-        cursor.execute(sql_query_pf, [request.user.id])
-        # Fetch all rows from the result
-        result_set = cursor.fetchall()
-    acoesPesquisa = []
-    for row in result_set:
-        linha = [row[0], row[1].strftime('%Y/%m/%d %H:%M:%S'), row[2], row[3], row[4], row[5]]
-        acoesPesquisa.append(linha)
+        with connection.cursor() as cursor:
+            cursor.execute(sql_reembolso, [acaoVender, acaoVender, request.user.id])
+            cursor.execute(sql_delete, [acaoVender])
+            cursor.execute(sql_query_pf, [request.user.id])
+            # Fetch all rows from the result
+            result_set = cursor.fetchall()
+        acoesPesquisa = []
+        for row in result_set:
+            linha = [row[0], row[1].strftime('%Y/%m/%d %H:%M:%S'), row[2], row[3], row[4], row[5]]
+            acoesPesquisa.append(linha)
 
-    acoes = []
+        acoes = []
 
-    for pesquisa in acoesPesquisa:
-        # Create a new dictionary for each iteration
-        acao_temp = {
-            "nome": pesquisa[2],
-            "valor": pesquisa[4],
-            "volume": pesquisa[3],
-            "horario": pesquisa[1]
-        }
-        acoes.append(acao_temp)
+        for pesquisa in acoesPesquisa:
+            # Create a new dictionary for each iteration
+            acao_temp = {
+                "nome": pesquisa[2],
+                "valor": pesquisa[4],
+                "volume": pesquisa[3],
+                "horario": pesquisa[1],
+                "id": pesquisa[0]
+            }
+            acoes.append(acao_temp)
 
-    cliente = models.PessoaFisica.objects.get(user=request.user)  
-    print(acoes)
-    return render(request, "gtb/historicoacoes.html", {
-        "user": request.user,
-        "cliente": cliente,
-        "acoes": acoes
-    })  
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+        return render(request, "gtb/historicoacoes.html", {
+            "user": request.user,
+            "cliente": cliente,
+            "acoes": acoes
+        }) 
+
+    else:
+        sql_query_pf = """
+            SELECT * FROM gtb_historicocompraevendaacoes WHERE user_id = %s
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql_query_pf, [request.user.id])
+            # Fetch all rows from the result
+            result_set = cursor.fetchall()
+        acoesPesquisa = []
+        for row in result_set:
+            linha = [row[0], row[1].strftime('%Y/%m/%d %H:%M:%S'), row[2], row[3], row[4], row[5]]
+            acoesPesquisa.append(linha)
+
+        acoes = []
+
+        for pesquisa in acoesPesquisa:
+            # Create a new dictionary for each iteration
+            acao_temp = {
+                "nome": pesquisa[2],
+                "valor": pesquisa[4],
+                "volume": pesquisa[3],
+                "horario": pesquisa[1],
+                "id": pesquisa[0]
+            }
+            acoes.append(acao_temp)
+
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+        print(acoes)
+        return render(request, "gtb/historicoacoes.html", {
+            "user": request.user,
+            "cliente": cliente,
+            "acoes": acoes
+        })  

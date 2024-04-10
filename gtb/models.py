@@ -16,7 +16,7 @@ class PessoaFisica(models.Model):
     nome_completo   = models.CharField(max_length=64, null=False, blank=False)
     telefone        = models.CharField(max_length=8, null=False, blank=False)
     saldo_da_conta  = models.FloatField(default=0, null=False, blank=False)
-    user_acoes      = models.ManyToManyField('HistoricoCompraEVendaAcoes', related_name="acoes")
+    # user_acoes      = models.ManyToManyField('HistoricoCompraEVendaAcoes', related_name="acoes")
 
     def __str__(self):
         return f"{self.CPF}"
