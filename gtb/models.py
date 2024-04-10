@@ -85,9 +85,9 @@ class HistoricoTransferencias(models.Model):
     """Classe destinada a entidade histórico das transferências"""
     horario     = models.DateTimeField(auto_now_add=True)
     valor       = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False)
-    recebeu     = models.CharField(max_length=64, null=False, blank=False)
+    recebeu     = models.CharField(max_length=64, null=False, blank=False) # quem recebeu
     tipo_recebe = models.CharField(max_length=64, null=False, blank=False)
-    enviou      = models.CharField(max_length=64, null=False, blank=False)
+    enviou      = models.CharField(max_length=64, null=False, blank=False) # quem enviou
     tipo_envia  = models.CharField(max_length=64, null=False, blank=False)
 
     def __str__(self):

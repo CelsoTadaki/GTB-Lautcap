@@ -12,6 +12,7 @@ urlpatterns = [
     path("fazersaquePF", views.fazersaquePF, name="fazersaquePF"),
     path("fazerdepositoPJ", views.fazerdepositoPJ, name="fazerdepositoPJ"),
     path("fazersaquePJ", views.fazersaquePJ, name="fazersaquePJ"),
+    path("acoes", views.acoes, name="acoes"),
     path("transferenciaPFparaPJ", views.transferenciaPFparaPJ, name="transferenciaPFparaPJ"),
     path("transferenciaPFparaPF", views.transferenciaPFparaPF, name="transferenciaPFparaPF"),
     path("transferenciaPJparaPF", views.transferenciaPJparaPF, name="transferenciaPJparaPF"),

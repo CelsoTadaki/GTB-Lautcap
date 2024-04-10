@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.db import connection
 from datetime import datetime
+import requests
 
 from . import models
 
@@ -270,6 +271,71 @@ def fazersaquePF(request):
             "user": request.user,
             "cliente": cliente
         })
+
+
+@login_required
+def acoes(request):
+    if request.method == "POST":
+        # Getting all info from request.
+        print(request.POST)
+        if "botaoHome" in request.POST and request.user.is_authenticated:
+            cliente = models.PessoaFisica.objects.get(user=request.user)  
+            return render(request, "gtb/home.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
+            
+        acao = request.POST["textoProcurarAcao"]
+        acaoComprar = request.POST["textoComprarAcao"]
+        quantidade = request.POST["quantidadeAcao"]
+        # Error handling and some edge cases
+        if not acao:
+            messages.error(request, "Acão Inválida")
+            cliente = models.PessoaFisica.objects.get(user=request.user)  
+            apiCall = requests.get('https://brapi.dev/api/quote/list?sortBy=volume&limit=20&token=eJGEyu8vVHctULdVdHYzQd')
+            acoes = apiCall.json()
+            return render(request, "gtb/acoes.html", {
+                "user": request.user,
+                "cliente": cliente,
+                "acoes": acoes
+            })
+            
+        if "botaoComprarAcao" in request.POST and request.user.is_authenticated:
+            apiCall = requests.get(f'https://brapi.dev/api/quote/list?search={acao}&token=eJGEyu8vVHctULdVdHYzQd')
+            acoes = apiCall.json()
+            cliente = models.PessoaFisica.objects.get(user=request.user)
+            saldo = cliente.saldo_da_conta
+            precoTotal = quantidade*acoes.stocks[0].close
+            if saldo < precoTotal:
+                messages.error(request, "Saldo insuficiente")
+                apiCall = requests.get('https://brapi.dev/api/quote/list?sortBy=volume&limit=20&token=eJGEyu8vVHctULdVdHYzQd')
+                return render(request, "gtb/acoes.html", {
+                    "user": request.user,
+                    "cliente": cliente,
+                    "acoes": acoes
+                })
+            else:
+                pass
+            
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+        apiCall = requests.get(f'https://brapi.dev/api/quote/list?search={acao}&token=eJGEyu8vVHctULdVdHYzQd')
+        acoes = apiCall.json()
+        return render(request, "gtb/acoes.html", {
+            "user": request.user,
+            "cliente": cliente,
+            "acoes": acoes
+        })
+
+    else:
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
+        apiCall = requests.get('https://brapi.dev/api/quote/list?sortBy=volume&limit=20&token=eJGEyu8vVHctULdVdHYzQd')
+        acoes = apiCall.json()
+        return render(request, "gtb/acoes.html", {
+            "user": request.user,
+            "cliente": cliente,
+            "acoes": acoes
+        })
+    
     
 @login_required
 def transferenciaPFparaPJ(request):
@@ -450,7 +516,7 @@ def transferenciaPJparaPF(request):
             cursor.execute(sql_query_pj, [valor, CPF_dest])
             cursor.execute(sql_query_historico, [datetime.now(), valor, CPF_dest, 'PJ', currentUser.id, 'PF'])
 
-        cliente = models.PessoaJuridica.objects.get(user=request.user)  
+        cliente = models.PessoaJuridica.objects.get(user=request.user) 
         connection.commit()
 
             
