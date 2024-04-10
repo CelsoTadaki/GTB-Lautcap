@@ -1,24 +1,35 @@
 from django.urls import path
 
 from . import views
+from . import viewsPF
+from . import viewsPJ
 
 urlpatterns = [
     path("", views.home, name="home"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
-    path("registrar_pessoa_fisica", views.registrarPF, name="registrarPF"),
-    path("registrar_pessoa_juridica", views.registrarPJ, name="registrarPJ"),
-    path("fazerdepositoPF", views.fazerdepositoPF, name="fazerdepositoPF"),
-    path("fazersaquePF", views.fazersaquePF, name="fazersaquePF"),
-    path("fazerdepositoPJ", views.fazerdepositoPJ, name="fazerdepositoPJ"),
-    path("fazersaquePJ", views.fazersaquePJ, name="fazersaquePJ"),
-    path("acoes", views.acoes, name="acoes"),
-    path("transferenciaPFparaPJ", views.transferenciaPFparaPJ, name="transferenciaPFparaPJ"),
-    path("transferenciaPFparaPF", views.transferenciaPFparaPF, name="transferenciaPFparaPF"),
-    path("transferenciaPJparaPF", views.transferenciaPJparaPF, name="transferenciaPJparaPF"),
-    path("transferenciaPJparaPJ", views.transferenciaPJparaPJ, name="transferenciaPJparaPJ"),
     
-    # path("new-listing/", views.newListing, name="newListing"),
+    
+    # pessoa fisica
+    path("registrar_pessoa_fisica", viewsPF.registrarPF, name="registrarPF"),
+    path("fazerdepositoPF", viewsPF.fazerdepositoPF, name="fazerdepositoPF"),
+    path("fazersaquePF", viewsPF.fazersaquePF, name="fazersaquePF"),
+    path("acoes", viewsPF.acoes, name="acoes"),
+    path("transferenciaPFparaPJ", viewsPF.transferenciaPFparaPJ, name="transferenciaPFparaPJ"),
+    path("transferenciaPFparaPF", viewsPF.transferenciaPFparaPF, name="transferenciaPFparaPF"),
+    
+    
+    # pesso juridica
+    path("registrar_pessoa_juridica", viewsPJ.registrarPJ, name="registrarPJ"),
+    path("fazerdepositoPJ", viewsPJ.fazerdepositoPJ, name="fazerdepositoPJ"),
+    path("fazersaquePJ", views.fazersaquePJ, name="fazersaquePJ"),
+    path("transferenciaPJparaPF", viewsPJ.transferenciaPJparaPF, name="transferenciaPJparaPF"),
+    path("transferenciaPJparaPJ", viewsPJ.transferenciaPJparaPJ, name="transferenciaPJparaPJ"),
+    
+    
+    
+    
+    # projeto antigo
     path("<slug:title>/<int:id>/", views.listingPage, name="listingPage"),
     path("watchlist/", views.watchlist, name="watchlist"),
     path("my-listings/", views.myListings, name="myListings"),

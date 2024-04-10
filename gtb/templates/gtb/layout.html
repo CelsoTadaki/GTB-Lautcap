@@ -10,8 +10,67 @@
         {% endblock %}
     </head>
     <body>
-        <div>
-        </div>
+        {% if user.is_authenticated %}
+            <div class="header">
+                <div class="logoDivheader">
+                    <img src="{% static 'gtb/btg.png' %}" class="logoheader">
+                </div>
+            </div>
+
+            <div class="infoAcoes">
+                {% if user.is_pessoaFisica %}
+                    <a href="{% url 'fazerdepositoPF' %}">Fazer depósito</a>
+                {% else %}
+                    <a href="{% url 'fazerdepositoPJ' %}">Fazer depósito</a>
+                {% endif %}
+                {% if user.is_pessoaFisica %}
+                    <a href="{% url 'fazersaquePF' %}">Fazer saque</a>
+                {% else %}
+                    <a href="{% url 'fazersaquePJ' %}">Fazer saque</a>
+                {% endif %}
+                {% if user.is_pessoaFisica %}
+                    <a href="{% url 'transferenciaPFparaPJ' %}">Transferência para PJ</a>
+                    <a href="{% url 'transferenciaPFparaPF' %}">Transferência para PF</a>
+                {% else %}
+                    <a href="{% url 'transferenciaPJparaPJ' %}">Transferência para PJ</a>
+                    <a href="{% url 'transferenciaPJparaPF' %}">Transferência para PF</a>
+                {% endif %}
+                {% if user.is_pessoaFisica %}
+                    <a href="{% url 'acoes' %}">Ações</a>
+                {% endif %}
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'logout' %}">Log Out</a>
+            </div>
+
+        {% endif %}
+        {% if home %}
+            <div class="nav">
+                <div class="homeLoginRegistrar">
+                    <div class="logoDiv">
+                        <img src="{% static 'gtb/btg.png' %}" class="logo">
+                    </div>
+            
+                    <div class="loginDiv">
+                        <a href="{% url 'login' %}">
+                            <input class="botaoLogin" type="submit" value="Entrar">
+                        </a>
+                    </div>
+                </div>
+                <div class="homeRegistrar">
+                    <h2> <b>Cadastre-se hoje gratuitamente</b> </h2>
+                    <h3> Selecione o tipo de conta que você quer criar </h3>
+            
+                    <div class= "botoesRegistrar">
+                        <a href="{% url 'registrarPF' %}">
+                            <input class="botaoRegistraPessoaFisica" type="submit" value="Eu sou Pessoa Física">
+                        </a>
+                        <a href="{% url 'registrarPJ' %}">
+                            <input class="botaoRegistraPessoaJuridica" type="submit" value="Eu sou Pessoa Jurídica">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
         <div class="center">
             {% block body %}

@@ -15,7 +15,8 @@ class PessoaFisica(models.Model):
     CPF             = models.CharField(max_length=15, null=False, blank=False, primary_key=True)
     nome_completo   = models.CharField(max_length=64, null=False, blank=False)
     telefone        = models.CharField(max_length=8, null=False, blank=False)
-    saldo_da_conta  = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False)
+    saldo_da_conta  = models.FloatField(default=0, null=False, blank=False)
+    user_acoes       = models.ManyToManyField('HistoricoCompraEVendaAcoes', related_name="acoes")
 
     def __str__(self):
         return f"{self.CPF}"
@@ -37,8 +38,8 @@ class Emprestimo(models.Model):
     tipo               = models.CharField(max_length=64, null=False, blank=False)
     CPF_CNPJ           = models.CharField(max_length=15, null=False, blank=False)
     valor              = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False)
-    dias_ate_vencimento = models.IntergerField(null=False, blank=False, default=30)
-    vencimento         = models.DateTimeField(default=datetime.now() + timedelta(days=dias_ate_vencimento))
+    dias_ate_vencimento = models.IntegerField(null=False, blank=False, default=30)
+    vencimento         = models.DateTimeField(default=(datetime.now() + timedelta(days=30)))
     data_de_emprestimo = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.CPF_CNPJ}"
@@ -71,10 +72,8 @@ class HistoricoCompraEVendaAcoes(models.Model):
     """Classe destinada a entidade histórico das compras e venda de ações"""
     horario    = models.DateTimeField(auto_now_add=True) # verificar se esta correto
     valor      = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False)
-    comprador  = models.CharField(max_length=64, null=False, blank=False)
-    tipo       = models.CharField(max_length=64, null=False, blank=False) # verificar se esta correto
     nome_acao  = models.CharField(max_length=64, null=False, blank=False)
-    quantidade = models.DecimalField(max_digits=10, default=0, decimal_places=2, null=False, blank=False) # verificar se esta correto
+    quantidade = models.IntegerField(default=0, null=False, blank=False) 
 
     def __str__(self):
         return f"{self.nome_acao}"

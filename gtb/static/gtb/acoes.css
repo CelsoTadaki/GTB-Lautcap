@@ -1,5 +1,5 @@
 .textoProcurarAcao {
-    width: 300px;
+    width: 200px;
     height: 40px;
     margin-right: 10px;
     border-radius: 5px;
@@ -91,3 +91,8 @@ tbody tr:nth-of-type(odd) {
 tfoot th {
     text-align: left;
   }
+
+.success {
+    font: 10px;
+    color: rgb(47, 194, 71);
+}

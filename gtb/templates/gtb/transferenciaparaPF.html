@@ -8,12 +8,6 @@
 {% block body %}
     {% if cliente %}
         {% if user.is_pessoaFisica %}
-            <div class="header">
-                <div class="logoDivheader">
-                    <img src="{% static 'gtb/btg.png' %}" class="logoheader">
-                </div>
-                
-            </div>
             <div class="info">
                 <p>Olá, <b>{{ cliente.nome_completo }}</b>!<br>
                 Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
@@ -39,12 +33,7 @@
                 </form>
             </div>
         {% else %}
-            <div class="header">
-                <div class="logoDivheader">
-                    <img src="{% static 'gtb/btg.png' %}" class="logoheader">
-                </div>
-                
-            </div>
+
             <div class="info">
                 <p>Olá, <b>{{ cliente.nome_da_empresa }}</b>!<br>
                 Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
@@ -65,37 +54,8 @@
             </div>
         {% endif %}
 
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-        </li>
-
     {% else %}
-        <div class="nav">
-            <div class="homeLoginRegistrar">
-                <div class="logoDiv">
-                    <img src="{% static 'gtb/btg.png' %}" class="logo">
-                </div>
-        
-                <div class="Registra">
-                    <a href="{% url 'login' %}">
-                        <input class="botaoRegistra" type="submit" value="Entrar">
-                    </a>
-                </div>
-            </div>
-            <div class="homeRegistrar">
-                <h2> <b>Cadastre-se hoje gratuitamente</b> </h2>
-                <h3> Selecione o tipo de conta que você quer criar </h3>
-        
-                <div class= "botoesRegistrar">
-                    <a href="{% url 'registrarPF' %}">
-                        <input class="botaoRegistraPessoaFisica" type="submit" value="Eu sou Pessoa Física">
-                    </a>
-                    <a href="{% url 'registrarPJ' %}">
-                        <input class="botaoRegistraPessoaJuridica" type="submit" value="Eu sou Pessoa Jurídica">
-                    </a>
-                </div>
-            </div>
-        </div>
+       
 
     {% endif %}
     

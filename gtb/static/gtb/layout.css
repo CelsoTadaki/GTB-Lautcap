@@ -5,11 +5,12 @@ body {
     width: 100%;
 }
 .logoheader {
-    width: 30%;
+    width: 20%;
 }
 
 .logoDivheader {
     padding: 20px;
+    width: 60%;
 }
 
 .info {
@@ -18,6 +19,18 @@ body {
     border-radius: 12px;
     margin-bottom: 12px;
     padding: 12px;
+
+}
+
+.infoAcoes {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-items: flex-start;
+    gap: 30px;
+    padding-bottom: 10px;
+    padding-left: 20%;
+    padding-right: 20%;
 }
 
 .header {
@@ -35,6 +48,7 @@ body {
     font: 10px;
     color: rgb(219, 71, 71);
 }
+
 
 .bids {
     display: flex;
@@ -115,7 +129,8 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-
+    justify-content: space-between;
+    width: 100%;
 }
 
 .loginRegistra {
@@ -123,7 +138,7 @@ body {
     flex-direction: row;
 }
 
-.botaoRegistra {
+.botaoLogin {
     background-color: #195ab4;
     color: white;
     border-radius: 5px;
