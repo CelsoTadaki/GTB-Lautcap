@@ -53,7 +53,7 @@ class Emprestimo(models.Model):
     vencimento         = models.DateTimeField(default=(datetime.now() + timedelta(days=30)))
     data_de_emprestimo = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return f"{self.CPF_CNPJ}"
+        return f"Valor: {self.valor} | Vencimento: {self.vencimento} | Data: {self.data_de_emprestimo}"
 
 class GerentePF(models.Model):
     """Classe destinada a entidade gerente pessoa física"""
@@ -63,7 +63,7 @@ class GerentePF(models.Model):
     agencia_id      = models.ForeignKey(Agencia, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.nome_completo} - {self.agencia_id.cidade}"
+        return f"{self.nome_completo} - {self.agencia_id.cidade} | username: {self.user.username}"
 
 class GerentePJ(models.Model):
     """Classe destinada a entidade gerente pessoa jurídica"""
@@ -73,7 +73,7 @@ class GerentePJ(models.Model):
     empresa_atendida = models.CharField(max_length=64, null=False, blank=False)
 
     def __str__(self):
-        return f"{self.nome_completo}"
+        return f"Nome: {self.nome_completo} | username: {self.user.username}"
 
 class HistoricoCompraEVendaAcoes(models.Model):
     """Classe destinada a entidade histórico das compras e venda de ações"""

@@ -10,13 +10,15 @@
 
 {% block body %}
 
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="{{ message.tags }}">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+
     {% if cliente or user.is_authenticated %}
         {% if user.is_pessoaFisica %}
-            {% if messages %}
-                {% for message in messages %}
-                    <h3 class="{{ message.tags }}">{{ message }}</h3>
-                {% endfor %}
-            {% endif %}
+            
             <div class="info">
                 <p>Olá, <b>{{ cliente.nome_completo }}</b>!<br>
                 Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
@@ -49,12 +51,8 @@
                 <h2>Deposito</h2>
                 <form action="{% url 'fazerdepositoPJ' %}" method="post">
                     {% csrf_token %}
-                    <div>
-                        <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
-                    </div>
-                    <div class="button">
-                        <button type="submit">Depositar</button>
-                    <div>
+                    <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
+                    <button type="submit" class="botaoProcurarGerente">Depositar</button>
                 </form>
             </div>
         {% endif %}

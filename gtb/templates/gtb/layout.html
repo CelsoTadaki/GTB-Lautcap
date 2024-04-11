@@ -41,6 +41,8 @@
                     <a href="{% url 'acoes' %}">Ações</a>
                     <a href="{% url 'historicoacoes' %}">Minhas Ações</a>
                     <a href="{% url 'historicotransferenciasPF' %}">Transferências</a>
+                    <a href="{% url 'mostrarHistoricoEmprestimos' %}">Meus Empréstimos</a>
+                    
                 {% elif user.is_pessoaJuridica%}
                     <a href="{% url 'historicotransferenciasPJ' %}">Transferências</a>
                 {% endif %}
@@ -49,12 +51,14 @@
                     <a href="{% url 'alterarGerentes' %}">Alterar Gerentes</a>
                     <a href="{% url 'deletarGerentes' %}">Deletar Gerentes</a>
                     <a href="{% url 'registrarGerentePF' %}">Contratar Gerente PF</a>
+                    <a href="{% url 'mostrarClientes' %}">Mostrar Clientes</a>
                     
                     {% comment %} <a href="{% url 'verificaClientes' %}"></a> {% endcomment %}
                 {% endif %}
                 {% if user.is_gerentePF %}
                     <a href="{% url 'atualizarPF' %}">Alterar PF</a>
                     <a href="{% url 'removePF' %}">Remover PF</a>
+                    <a href="{% url 'renegociarEmprestimoPF' %}">Renegociar Empréstimo PF</a>
                 {% endif %}
 
                 {% if user.is_gerentePJ %}

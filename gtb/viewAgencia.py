@@ -96,6 +96,19 @@ def alterarGerentes(request):
         })
     
 @login_required
+def mostrarClientes(request):
+    user = request.user
+    agencia = models.Agencia.objects.filter(user=user)[0]
+
+    clientesPF = models.PessoaFisica.objects.filter(agencia=agencia)
+    clientesPJ = models.PessoaJuridica.objects.filter(agencia=agencia)
+    return render(request, "gtb/mostrarClientes.html", {
+        "metodo": "get",
+        "clientesCPF": clientesPF,
+        "clientesCNPJ": clientesPJ
+    })
+    
+@login_required
 def deletarGerentes(request):
     user = request.user
     if request.method == "POST":

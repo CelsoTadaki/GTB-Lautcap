@@ -1,0 +1,61 @@
+{% extends "gtb/layout.html" %}
+{% load filter %}
+{% load static %}
+
+{% block title %}Alterar Gerentes{% endblock %}
+
+{% block head %}
+    <link href="{% static 'gtb/acoes.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="{{ message.tags }}">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+
+    <form action="{% url 'alterarGerentes' %}" method="post">
+        <div class="formDiv">
+            {% csrf_token %}
+            <div class="tableDiv">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>CPF/CNPJ</th>
+                            <th>E-mail</th>
+                            <th>ID Agencia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <h2>Clientes</h2>
+                        {% for dadosVar in clientesCPF %}
+                            <tr>
+                                <td>{{ dadosVar.user_id }}</td>
+                                <td>{{ dadosVar.nome_completo }}</td>
+                                <td>{{ dadosVar.CPF }}</td>
+                                <td>{{ dadosVar.user.email }}</td>
+                                <td>{{ dadosVar.agencia_id }}</td>
+                            </tr>
+                        {% endfor %}
+                        
+                        {% for dadosVar in clientesCNPJ %}
+                            <tr>
+                                <td>{{ dadosVar.user_id }}</td>
+                                <td>{{ dadosVar.nome_da_empresa }}</td>
+                                <td>{{ dadosVar.CNPJ }}</td>
+                                <td>{{ dadosVar.user.email }}</td>
+                                <td>{{ dadosVar.agencia_id }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        
+    </form>
+
+{% endblock %}

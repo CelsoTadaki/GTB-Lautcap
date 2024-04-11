@@ -11,6 +11,12 @@
 
 
 {% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="{{ message.tags }}">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+
     {% if cliente %}
         {% if user.is_pessoaFisica %}
 

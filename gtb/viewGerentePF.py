@@ -161,6 +161,18 @@ def deleteClient(cliente, user):
     cliente.delete()
     return
 
+def renegociarEmprestimoPF(request):
+
+    emprestimos = models.Emprestimo.objects.filter(tipo="pf")
+    if request.method == "POST":
+        return render(request, "gtb/renegociarEmprestimoPF.html",
+                {
+                    "emprestimos": emprestimos
+                })
+    else:
+        return render(request, "gtb/renegociarEmprestimoPF.html",{
+                "emprestimos": emprestimos})
+
  
 
 

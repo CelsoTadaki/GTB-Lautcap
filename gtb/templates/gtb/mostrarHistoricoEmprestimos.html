@@ -1,0 +1,45 @@
+{% extends "gtb/layout.html" %}
+{% load filter %}
+{% load static %}
+
+{% block title %}Empréstimos{% endblock %}
+
+{% block head %}
+    <link href="{% static 'gtb/acoes.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="{{ message.tags }}">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+
+    <form action="{% url 'mostrarHistoricoEmprestimos' %}" method="post">
+        <div class="formDiv">
+        <div class="tableDiv">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Data de Empréstimo</th>
+                        <th>Vencimento</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emprestimo in emprestimos %}
+                        <tr>
+                            <td>{{ emprestimo.id }}</td>
+                            <td>{{ emprestimo.data_de_emprestimo }}</td>
+                            <td>{{ emprestimo.vencimento }}</td>
+                            <td>R$ {{ emprestimo.valor }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </form>
+
+{% endblock %}

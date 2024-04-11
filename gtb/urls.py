@@ -24,6 +24,7 @@ urlpatterns = [
     path("historicotransferenciasPF", viewsPF.historicotransferencias, name="historicotransferenciasPF"),
     path("historicotransferenciasPJ", viewsPJ.historicotransferencias, name="historicotransferenciasPJ"),
     path("emprestimoparaPF", viewsPF.fazerEmprestimo, name="emprestimoparaPF"),
+    path("mostrarHistoricoEmprestimos", viewsPF.mostrarHistoricoEmprestimos, name="mostrarHistoricoEmprestimos"),
     
     # Pessoa Juridica
     path("registrar_pessoa_juridica", viewsPJ.registrarPJ, name="registrarPJ"),
@@ -35,6 +36,7 @@ urlpatterns = [
     # Gerente PF
     path("changePF", viewGerentePF.changePF, name="atualizarPF"),
     path("removePF", viewGerentePF.removePF, name="removePF"),
+    path("renegociarEmprestimoPF", viewGerentePF.renegociarEmprestimoPF, name="renegociarEmprestimoPF"),
     
     # Gerente PJ
     path("changePJ", viewGerentePJ.changePJ, name="atualizarPJ"),
@@ -44,6 +46,7 @@ urlpatterns = [
     path("alterarGerentes", viewAgencia.alterarGerentes, name="alterarGerentes"),
     path("deletarGerentes", viewAgencia.deletarGerentes, name="deletarGerentes"),
     path("registrarGerentePF", viewAgencia.registrarGerentesPF, name="registrarGerentePF"),
+    path("mostrarClientes", viewAgencia.mostrarClientes, name="mostrarClientes"),
     
     # projeto antigo
     path("<slug:title>/<int:id>/", views.listingPage, name="listingPage"),

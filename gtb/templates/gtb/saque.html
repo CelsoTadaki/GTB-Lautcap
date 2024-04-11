@@ -49,12 +49,9 @@
                 <h2>Saque</h2>
                 <form action="{% url 'fazersaquePJ' %}" method="post">
                     {% csrf_token %}
-                    <div>
-                        <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
-                    </div>
-                    <div class="button">
-                        <button type="submit" class="botaoProcurarAcao">Sacar</button>
-                    <div>
+ 
+                    <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
+                    <button type="submit" class="botaoProcurarGerente">Sacar</button>
                 </form>
             </div>
         {% endif %}

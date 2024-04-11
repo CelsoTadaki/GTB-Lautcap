@@ -21,6 +21,7 @@ def registrarPJ(request):
         email = request.POST["email"]
         telefone = request.POST["telefone"]
         CNPJ = request.POST["CNPJ"]
+        agenciaID = request.POST["agenciaID"]
         
         # Ensure password matches confirmation
         password = request.POST["senha"]
@@ -33,6 +34,7 @@ def registrarPJ(request):
         # Attempt to create new user
         try:
             # INSERT INTO gtb_user (password, username, email, is_pessoaFisica, is_active) VALUES (?, ?, ?, ?, ?)
+            agencia = models.Agencia.objects.get(id=agenciaID)
             user = models.User.objects.create_user(username=username, 
                                                    email=email, 
                                                    password=password,
@@ -44,7 +46,8 @@ def registrarPJ(request):
                                                                    CNPJ=CNPJ,
                                                                    nome_da_empresa=nome_da_empresa,
                                                                    setor=setor,
-                                                                   telefone=telefone)
+                                                                   telefone=telefone,
+                                                                   agencia=agencia)
             
             pessoa_juridica.save()
         except IntegrityError:
