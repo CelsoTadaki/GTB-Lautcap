@@ -14,6 +14,23 @@ import requests
 from . import models
 
 def home(request):
+    user = request.user
+    if user.is_authenticated:
+        if user.is_pessoaFisica:
+            cliente = models.PessoaFisica.objects.get(user=user)   
+        elif user.is_pessoaJuridica:
+            cliente = models.PessoaJuridica.objects.get(user=user) 
+        elif user.is_agencia:
+            cliente = models.Agencia.objects.get(user=user)
+        elif user.is_gerentePF:
+            cliente = models.GerentePF.objects.get(user=user)
+        else:
+            cliente = models.GerentePJ.objects.get(user=user)
+        return render(request, "gtb/home.html", {
+            "user": user,
+            "cliente": cliente,
+            "home": True
+        })
     return render(request, "gtb/home.html", {
         "home": True,
     })
@@ -46,7 +63,7 @@ def login_view(request):
             })
         else:
             return render(request, "gtb/login.html", {
-                "message": "Invalid username and/or password."
+                "message": "Nome de usuário ou senha inválidos."
             })
     else:
         return render(request, "gtb/login.html")

@@ -5,64 +5,30 @@
 {% block title %}GTB Lautpac{% endblock %}
 
 
+{% block head %}
+    <link href="{% static 'gtb/acoes.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
-    <form action="{% url 'emprestimoparaPF' %}" method="post">
-            <div class="info">
-                <p>Olá, <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
-                <p> Você deseja fazer um empréstimo de quantos reais? </p>
-            </div>
-            <div class="divComprarAcoes">
-                <input class="textoProcurarAcao" type="text" name="comprarAcao" placeholder="Nome do Ticker">
-                <input class="textoQuantidadeAcao" type="number" name="quantidadeAcao" placeholder="Quantidade">
-                <button class="botaoProcurarAcao" type="submit" name="botaoComprarAcao">Comprar</button>
-            </div>
-
-
-            <div class="info">
-                <h2>Seus dados</h2>
-                Seu CPF é: {{ cliente.CPF }} <br>
-                Seu telefone é: {{ cliente.telefone }} <br>
-                Seu email é: {{ user.email }} <br>
-            </div>
-            <div class="info">
-                <h2>Transferencia</h2>
-                <form action="{% url 'transferenciaPFparaPF' %}" method="post">
-                    {% csrf_token %}
-                    <div>
-                        <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
-                        <input class="bidInput" type="text" name="CPF" placeholder="CPF">
-                    </div>
-                    <div class="button">
-                        <button type="submit">Transferir</button>
-                    <div>
-                </form>
-            </div>
-        {% else %}
-
-            <div class="info">
-                <p>Olá, <b>{{ cliente.nome_da_empresa }}</b>!<br>
-                Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
-                <p> Você é uma Pessoa Jurídica </p>
-            </div>
-            <div class="info">
-                <h2>Transferencia</h2>
-                <form action="{% url 'transferenciaPJparaPF' %}" method="post">
-                    {% csrf_token %}
-                    <div>
-                        <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
-                        <input class="bidInput" type="text" name="CPF" placeholder="CPF">
-                    </div>
-                    <div class="button">
-                        <button type="submit">Transferir</button>
-                    <div>
-                </form>
-            </div>
-        {% endif %}
-
-    {% else %}
-       
-
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="{{ message.tags }}">{{ message }}</h3>
+        {% endfor %}
     {% endif %}
-    
-    
+    <div class="info">
+        <h2>Seus dados</h2>
+        {{ cliente.user.nome_completo }}, você tem R${{ cliente.saldo_da_conta }} na sua conta, você deverá pagar 
+        o empréstimo em até 30 dias<br>
+    </div>
+    <div class="info">
+        <h2>Empréstimo</h2>
+        <p> Qual valor você gostaria de pedir ? <p>
+        <form action="{% url 'emprestimoparaPF' %}" method="post">
+            {% csrf_token %}
+
+            <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
+            <button type="submit" class="botaoProcurarGerente">Fazer Empréstimo</button>
+
+        </form>
+    </div>
 {% endblock %}

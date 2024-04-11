@@ -45,8 +45,10 @@ def registrarPF(request):
                                                                telefone=telefone)
             pessoa_fisica.save()
         except IntegrityError:
+            agencias = models.Agencia.objects.all()
             return render(request, "gtb/registrarPF.html", {
-                "message": "Username already taken."
+                "message": "Nome de usuário já existe",
+                "agencias": agencias
             })
         login(request, user)
         cliente = models.PessoaFisica.objects.get(user=user)    
@@ -55,7 +57,11 @@ def registrarPF(request):
                 "cliente": cliente
             })
     else:
-        return render(request, "gtb/registrarPF.html")
+        agencias = models.Agencia.objects.all()
+        print(agencias, "print do felipe")
+        return render(request, "gtb/registrarPF.html", {
+                "agencias": agencias
+            })
 
 
 @login_required
@@ -156,15 +162,14 @@ def fazersaquePF(request):
         
 @login_required
 def transferenciaPFparaPJ(request):
-    print("hello")
     if request.method == "POST":
         # Getting all info from request.
         valor = request.POST["valor"]
         CNPJ_dest = request.POST["CNPJ"]
         # Error handling and some edge cases
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
         if not valor:
             messages.error(request, "Insira o valor")
-            cliente = models.PessoaFisica.objects.get(user=request.user)  
             
             return render(request, "gtb/transferenciaparaPJ.html", {
                 "user": request.user,
@@ -178,39 +183,53 @@ def transferenciaPFparaPJ(request):
                 "user": request.user,
                 "cliente": cliente
             })
-            
-        currentUser = request.user
-
-        sql_query_pf = """
-        UPDATE gtb_pessoafisica
-        SET saldo_da_conta = saldo_da_conta - %s
-        WHERE user_id = %s;
-        """
         
-        # Second SQL query to update PessoaJuridica
-        sql_query_pj = """
-        UPDATE gtb_pessoajuridica
-        SET saldo_da_conta = saldo_da_conta + %s
-        WHERE CNPJ = %s;
-        """
-        sql_query_historico = """
-            INSERT INTO gtb_historicotransferencias (horario, valor, recebeu, tipo_recebe, enviou, tipo_envia)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """
-        
-        
-        with connection.cursor() as cursor:
-            cursor.execute(sql_query_pf, [valor, currentUser.id])
-            cursor.execute(sql_query_pj, [valor, CNPJ_dest])
-            cursor.execute(sql_query_historico, [datetime.now(), valor, CNPJ_dest, 'PJ', currentUser.id, 'PF'])
-        connection.commit()
+        if float(valor) < cliente.saldo_da_conta:
+            if float(valor) > 0.000:
+                currentUser = request.user
 
-        cliente = models.PessoaFisica.objects.get(user=request.user)  
-        return render(request, "gtb/transferenciaparaPJ.html", {
-            "user": request.user,
-            "cliente": cliente
-        })
+                sql_query_pf = """
+                UPDATE gtb_pessoafisica
+                SET saldo_da_conta = saldo_da_conta - %s
+                WHERE user_id = %s;
+                """
+                
+                # Second SQL query to update PessoaJuridica
+                sql_query_pj = """
+                UPDATE gtb_pessoajuridica
+                SET saldo_da_conta = saldo_da_conta + %s
+                WHERE CNPJ = %s;
+                """
+                sql_query_historico = """
+                    INSERT INTO gtb_historicotransferencias (horario, valor, recebeu, tipo_recebe, enviou, tipo_envia)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """
+                
+                
+                with connection.cursor() as cursor:
+                    cursor.execute(sql_query_pf, [valor, currentUser.id])
+                    cursor.execute(sql_query_pj, [valor, CNPJ_dest])
+                    cursor.execute(sql_query_historico, [datetime.now(), valor, CNPJ_dest, 'PJ', currentUser.id, 'PF'])
+                connection.commit()
 
+                cliente = models.PessoaFisica.objects.get(user=request.user)  
+                messages.success(request, "Transferência realizada com sucesso!")
+                return render(request, "gtb/transferenciaparaPJ.html", {
+                    "user": request.user,
+                    "cliente": cliente
+                })
+            else:
+                messages.error(request, "Valor inválido")
+                return render(request, "gtb/transferenciaparaPJ.html", {
+                    "user": request.user,
+                    "cliente": cliente
+                })
+        else:
+            messages.error(request, "Peça um empréstimo!")
+            return render(request, "gtb/transferenciaparaPJ.html", {
+                "user": request.user,
+                "cliente": cliente
+            })
     else:
         cliente = models.PessoaFisica.objects.get(user=request.user)  
             
@@ -301,16 +320,6 @@ def acoes(request):
         acaoComprar = request.POST["comprarAcao"]
         quantidade = request.POST["quantidadeAcao"]
         # Error handling and some edge cases
-        if (not acao and acaoComprar) or not quantidade:
-            messages.error(request, "Acão Inválida")
-            cliente = models.PessoaFisica.objects.get(user=user)  
-            apiCall = requests.get('https://brapi.dev/api/quote/list?sortBy=volume&limit=20&token=eJGEyu8vVHctULdVdHYzQd')
-            acoes = apiCall.json()
-            return render(request, "gtb/acoes.html", {
-                "user": user,
-                "cliente": cliente,
-                "acoes": acoes
-            })
             
         if "botaoComprarAcao" in request.POST and user.is_authenticated:
             apiCall = requests.get(f'https://brapi.dev/api/quote/list?search={acaoComprar}&token=eJGEyu8vVHctULdVdHYzQd')
@@ -354,9 +363,12 @@ def acoes(request):
                 "acoes": acoes
             })
             
-        cliente = models.PessoaFisica.objects.get(user=user)  
-        apiCall = requests.get(f'https://brapi.dev/api/quote/list?search={acao}&token=eJGEyu8vVHctULdVdHYzQd')
-        acoes = apiCall.json()
+        cliente = models.PessoaFisica.objects.get(user=user)
+        try:
+            apiCall = requests.get(f'https://brapi.dev/api/quote/list?search={acao}&token=eJGEyu8vVHctULdVdHYzQd')
+            acoes = apiCall.json()
+        except:
+            pass
         return render(request, "gtb/acoes.html", {
             "user": user,
             "cliente": cliente,
@@ -512,9 +524,38 @@ def historicotransferencias(request):
         "acoes": acoes
     })  
 
+def fazerEmprestimo(request):
 
+    cliente = models.PessoaFisica.objects.get(user=request.user)
 
-    # def fazerEmprestimo(request):
+    if request.method == "POST":
+        valor = request.POST["valor"]
 
+        if float(valor) > 0:
+            sql_query_emprestimo ="""
+            INSERT INTO gtb_emprestimo (tipo, CPF_CNPJ, valor, vencimento, data_de_emprestimo)
+            VALUES (%s, %s, %s, %s, %s)
+            """
+            # Sample raw SQL query
+            sql_query_deposito = """
+            UPDATE gtb_pessoafisica
+            SET saldo_da_conta = saldo_da_conta + %s
+            WHERE user_id = %s
+            """
+            with connection.cursor() as cursor:
+                cursor.execute(sql_query_emprestimo, ['pf', cliente.CPF, valor, '30', datetime.now()])
+                cursor.execute(sql_query_deposito, [valor, cliente.user.id])
+                
+            connection.commit()
+
+        return render(request, "gtb/emprestimoparaPF.html", {
+            "saldo_atual": cliente.saldo_da_conta,
+            "cliente": cliente
+        })
+
+    return render(request, "gtb/emprestimoparaPF.html", {
+        "saldo_atual": cliente.saldo_da_conta,
+        "cliente": cliente
+    })
 
 

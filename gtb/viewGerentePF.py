@@ -134,7 +134,7 @@ def setEmailPF(client, email, user):
     # # Atualiza o email do cliente - SQL
     # sql_query = """
     #             UPDATE gtb_pessoafisica
-    #             SET email = %s
+    #             SET telefone = %s
     #             WHERE user_id = %s
     #             """
 

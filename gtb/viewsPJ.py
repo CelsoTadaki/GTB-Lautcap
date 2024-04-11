@@ -48,8 +48,10 @@ def registrarPJ(request):
             
             pessoa_juridica.save()
         except IntegrityError:
+            agencias = models.Agencia.objects.all()
             return render(request, "gtb/registrarPJ.html", {
-                "message": "Username already taken."
+                "message": "Nome de usuário já existe",
+                "agencias": agencias
             })
         login(request, user)
         cliente = models.PessoaJuridica.objects.get(user=user)    
@@ -58,7 +60,10 @@ def registrarPJ(request):
                 "cliente": cliente
             })
     else:
-        return render(request, "gtb/registrarPJ.html")
+        agencias = models.Agencia.objects.all()
+        return render(request, "gtb/registrarPJ.html", {
+                "agencias": agencias
+            })
 
 
 @login_required
@@ -289,4 +294,4 @@ def historicotransferencias(request):
         "user": request.user,
         "cliente": cliente,
         "acoes": acoes
-    })  
+    })

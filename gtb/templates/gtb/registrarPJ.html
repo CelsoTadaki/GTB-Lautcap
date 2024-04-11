@@ -37,6 +37,15 @@
         <div class="form-group">
             <input class="form-control" type="password" name="confirmacao" placeholder="Confirme a Senha">
         </div>
+
+        <select name="agenciaID" class="form-control" >
+            <option selected="selected">Selecione uma Agência</option>
+                
+            {% for agenciasVar in agencias %}
+                <option value="{{ agenciasVar.id }}">{{ agenciasVar.id }} - {{ agenciasVar.cidade }}</option>
+            {% endfor %}
+        </select><br>
+
         <div class="loginRegisterBtn">
             <input class="btn btn-primary" type="submit" value="Registrar">
         </div>

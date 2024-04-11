@@ -4,6 +4,11 @@
 
 {% block title %}GTB Lautpac{% endblock %}
 
+{% block head %}
+    <link href="{% static 'gtb/acoes.css' %}" rel="stylesheet">
+{% endblock %}
+
+
 
 {% block body %}
     {% if cliente %}
@@ -24,13 +29,11 @@
                 <h2>Transferencia</h2>
                 <form action="{% url 'transferenciaPFparaPJ' %}" method="post">
                     {% csrf_token %}
-                    <div>
-                        <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
-                        <input class="bidInput" type="text" name="CNPJ" placeholder="CNPJ">
-                    </div>
-                    <div class="button">
-                        <button type="submit">Transferir</button>
-                    <div>
+
+                    <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
+                    <input class="bidInput" type="text" name="CNPJ" placeholder="CNPJ">
+
+                    <button type="submit" class="botaoProcurarGerente">Transferir</button>
                 </form>
             </div>
         {% else %}
@@ -44,13 +47,11 @@
                 <h2>Transferencia</h2>
                 <form action="{% url 'transferenciaPJparaPJ' %}" method="post">
                     {% csrf_token %}
-                    <div>
-                        <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
-                        <input class="bidInput" type="text" name="CNPJ" placeholder="CNPJ">
-                    </div>
-                    <div class="button">
-                        <button type="submit">Transferir</button>
-                    <div>
+
+                    <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
+                    <input class="bidInput" type="text" name="CNPJ" placeholder="CNPJ">
+
+                    <button type="submit" class="botaoProcurarGerente">Transferir</button>
                 </form>
             </div>
         {% endif %}

@@ -4,7 +4,9 @@
 
 {% block title %}GTB Lautpac{% endblock %}
 
-
+{% block head %}
+    <link href="{% static 'gtb/acoes.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block body %}
     {% if messages %}
@@ -30,12 +32,10 @@
                 <h2>Saque</h2>
                 <form action="{% url 'fazersaquePF' %}" method="post">
                     {% csrf_token %}
-                    <div>
+
                         <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
-                    </div>
-                    <div class="button">
-                        <button type="submit">Sacar</button>
-                    <div>
+                        <button type="submit" class="botaoProcurarGerente">Sacar</button>
+
                 </form>
             </div>
         {% else %}
@@ -53,7 +53,7 @@
                         <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
                     </div>
                     <div class="button">
-                        <button type="submit">Sacar</button>
+                        <button type="submit" class="botaoProcurarAcao">Sacar</button>
                     <div>
                 </form>
             </div>

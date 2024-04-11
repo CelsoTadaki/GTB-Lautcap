@@ -1,0 +1,43 @@
+{% extends "gtb/layout.html" %}
+{% load filter %}
+{% load static %}
+
+{% block title %}Deletar Gerentes{% endblock %}
+
+{% block head %}
+    <link href="{% static 'gtb/acoes.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="{{ message.tags }}">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+
+    <form action="{% url 'deletarGerentes' %}" method="post">
+        <div class="formDivAlterarGerente">
+            {% csrf_token %}
+
+            <div class="divSelecionarGerente">
+                <select name="gerentePF" class="gerentesPFDropDown" >
+                    <option selected="selected">Selecione um Gerente</option>
+                        
+                    {% for gerente in gerentesPF %}
+                        <option value="{{ gerente.id }}">{{ gerente.nome_completo }}</option>
+                    {% endfor %}
+                </select>
+
+                <button class="botaoProcurarGerente" type="submit" name="deletarGerente">Demitir</button>
+            </div>
+
+            
+            <div class="botaoHomeDiv">
+                <a href="{% url 'home' %}">
+                    <input class="botaoHome" type="submit" value="Home" name="botaoHome">
+                </a>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

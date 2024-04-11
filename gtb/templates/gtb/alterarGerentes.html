@@ -16,58 +16,43 @@
     {% endif %}
 
     <form action="{% url 'alterarGerentes' %}" method="post">
-        <div class="formDivAlterarGerente">
+        <div class="formDiv">
             {% csrf_token %}
 
-            <div class="divSelecionarGerente">
-                <select name="gerentePF" class="gerentesPFDropDown" >
-                    <option selected="selected">Selecione um Gerente</option>
-                        
-                    {% for gerente in gerentesPF %}
-                        <option value="{{ gerente.id }}">{{ gerente.nome_completo }}</option>
-                    {% endfor %}
-                </select>
-
-                <button class="botaoProcurarGerente" type="submit" name="selecionarGerente">Selecionar</button>
+            <div class="divComprarAcoes">
+                <input class="textoProcurarAcao" type="text" name="ID" placeholder="ID">
+                <input class="textoProcurarAcao" type="text" name="CPF" placeholder="Novo CPF">
+                <input class="textoProcurarAcao" type="text" name="nome_completo" placeholder="Novo nome">
+                <input class="textoProcurarAcao" type="text" name="email" placeholder="Novo e-mail">
+                <button class="botaoProcurarAcao" type="submit" name="botaoVenderAcao">Atualizar</button>
             </div>
-
-            
-            <div class="botaoHomeDiv">
-                <a href="{% url 'home' %}">
-                    <input class="botaoHome" type="submit" value="Home" name="botaoHome">
-                </a>
-            </div>
-        </div>
-
-        {% if dados_gerentePF %}
-            {{ dados_gerentePF.nome_completo }} <br>
-            {{ dados_gerentePF.user.email }} <br>
-            {{ dados_gerentePF.agencia_id.cidade }}
-        
-
             <div class="tableDiv">
                 <table>
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Nome</th>
-                            <th>E-mail</th>
                             <th>CPF</th>
+                            <th>E-mail</th>
                             <th>Agencia</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for dadosVar in dados_gerentePF %}
                             <tr>
+                                <td>{{ dadosVar.id }}</td>
                                 <td>{{ dadosVar.nome_completo }}</td>
-                                <td>{{ dadosVar.user.email }}</td>
                                 <td>{{ dadosVar.CPF }}</td>
-                                <td>{{ dadosVar.agencia_id }} - {{ dadosVar.agencia_id }}</td>
+                                <td>{{ dadosVar.user.email }}</td>
+                                <td>{{ dadosVar.agencia_id }} - {{ dados_gerentePF.agencia_id }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-        {% endif %}
+        </div>
+
+        
     </form>
 
 {% endblock %}
