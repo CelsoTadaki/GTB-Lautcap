@@ -295,7 +295,7 @@ def acoes(request):
         acaoComprar = request.POST["comprarAcao"]
         quantidade = request.POST["quantidadeAcao"]
         # Error handling and some edge cases
-        if not acao and not acaoComprar or not quantidade:
+        if (not acao and acaoComprar) or not quantidade:
             messages.error(request, "Acão Inválida")
             cliente = models.PessoaFisica.objects.get(user=user)  
             apiCall = requests.get('https://brapi.dev/api/quote/list?sortBy=volume&limit=20&token=eJGEyu8vVHctULdVdHYzQd')

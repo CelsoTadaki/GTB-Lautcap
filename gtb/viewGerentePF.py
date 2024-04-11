@@ -39,57 +39,33 @@ def changePF(request):
             if newEmail != "" and newEmail != None:
                 usuario.update(email=newEmail)
 
-        # deleteClient = request.POST["deletar"]
-        # # 
-
-        # # se não existe o usuário do cliente
-        # if not userClient:
-        #     messages.error(request, "Selecione o cliente")
-        #     return render(request, "atualizarPF.html", {
-        #         "pessoasFisicas": pessoasFisicas
-        #         })
-        # else:
-        #     if not deleteClient:
-        #         cliente = searchOnePF(request, userClient)
-        #         if not newCompleteName and not newPhone:
-        #             messages.error(request, "Modifique algum campo!")
-        #             return render(request, "atualizarPF.html", {
-        #                 "pessoasFisicas": pessoasFisicas
-        #                 })
-        #         # messages.success(request, "Compra Feita com Sucesso!")
-
-        #         elif not newCompleteName and newPhone:
-        #             setPhonePF(cliente, newCompleteName, userClient)
-        #             messages.success(request, "Telefone alterado com sucesso!")
-        #             return render(request, "atualizarPF.html", {
-        #                 "pessoasFisicas": pessoasFisicas
-        #                 })
-        #         elif newCompleteName and not newPhone:
-        #             setNamePF(cliente, newCompleteName, userClient)
-        #             messages.success(request, "Nome alterado com sucesso!")
-        #             return render(request, "atualizarPF.html", {
-        #                 "pessoasFisicas": pessoasFisicas
-        #                 })
-        #         else:
-        #             setNamePF(cliente, newCompleteName, userClient)
-        #             setNamePF(cliente, newCompleteName, userClient)
-        #             messages.success(request, "Nome e Telefone alterados com sucesso!")
-        #             return render(request, "atualizarPF.html", {
-        #                 "pessoasFisicas": pessoasFisicas
-        #                 })
-        #     else:
-        #         deleteClient(cliente, userClient)
-        #         # pesquisa todos os usuários
-        #         pessoasFisicas = searchAllPF(request)
-        #         messages.success(request, "Conta excluida com sucesso!")
-        #         return render(request, "atualizarPF.html", {
-        #         "pessoasFisicas": pessoasFisicas
-        #         })
         return render(request, "gtb/atualizarPF.html", {
             "pessoasFisicas": pessoasFisicas
             })
     else:
         return render(request, "gtb/atualizarPF.html", {
+            "pessoasFisicas": pessoasFisicas
+            })
+    
+@login_required
+def removePF(request):
+    """ Função que muda os campos de nome_completo e telefone da pessoa física
+    """
+    pessoasFisicas = models.PessoaFisica.objects.all()
+
+    # a requisição é para mudar o telefone ou o nome completo
+    if request.method == "POST":
+        ID = request.POST["ID"]
+
+        if ID:
+            cliente = models.PessoaFisica.objects.filter(user_id=ID)
+            cliente.delete()
+                
+        return render(request, "gtb/removePF.html", {
+            "pessoasFisicas": pessoasFisicas
+            })
+    else:
+        return render(request, "gtb/removePF.html", {
             "pessoasFisicas": pessoasFisicas
             })
 

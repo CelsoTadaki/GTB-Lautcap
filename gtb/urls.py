@@ -32,6 +32,7 @@ urlpatterns = [
     
     # Gerente
     path("changePF", viewGerentePF.changePF, name="atualizarPF"),
+    path("removePF", viewGerentePF.removePF, name="removePF"),
     
     # Agencia
     path("alterarGerentes", viewAgencia.alterarGerentes, name="alterarGerentes"),

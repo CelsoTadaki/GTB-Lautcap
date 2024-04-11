@@ -18,16 +18,13 @@ def alterarGerentes(request):
     user = request.user
     cliente = models.Agencia.objects.get(user=user)
     if request.method == "POST":
-
-        valor = request.POST["valor"]
-        if not valor:
-            messages.error(request, "Insira o valor")
-            cliente = models.PessoaJuridica.objects.get(user=user)  
-            
-            return render(request, "gtb/alterarGerentes.html", {
-                "user": user,
-                "cliente": cliente
-            })
+        gerentePFID = request.POST["gerentePF"]
+        gerentePJID = request.POST["gerentePJ"]
+        
+        dados_gerentePF = models.GerentePF.objects.get(id=gerentePFID)
+        dados_gerentePJ = models.GerentePJ.objects.get(id=gerentePJID)
+        
+        
             
 
     else:
