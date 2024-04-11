@@ -16,6 +16,7 @@ body {
 .info {
     width: 80vw;
     background-color: white;
+    background-image: linear-gradient(to right, #ffffff, #d2e5ff);
     border-radius: 12px;
     margin-bottom: 12px;
     padding: 12px;
@@ -36,7 +37,8 @@ body {
 .header {
     width: 100%;
     height: auto;
-    background-color: white;
+    background-color: #d2e5ff; /* fallback color */
+    background-image: linear-gradient(to bottom, #ffffff, #d2e5ff); /* gradient */
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -144,7 +146,7 @@ body {
     border-radius: 5px;
     border: none;
     padding: 10px;
-    font-size: 16px;
+    font-size: 20px;
 }
 
 

@@ -8,18 +8,18 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.conf import settings
 from django.db import connection
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 from . import models
 
 
 @login_required
 def changePF(request):
-    """ Função que muda os campos de nome_completo e telefone da pessoa física
+    """ Função que muda os campos de nome_completo,
+        email, telefone e CPF da pessoa física
     """
     pessoasFisicas = models.PessoaFisica.objects.all()
 
-    # a requisição é para mudar o telefone ou o nome completo
     if request.method == "POST":
         ID = request.POST["ID"]
         CPF = request.POST["CPF"]
@@ -49,11 +49,10 @@ def changePF(request):
     
 @login_required
 def removePF(request):
-    """ Função que muda os campos de nome_completo e telefone da pessoa física
+    """ Função que remove a pessoa fisica do banco de dados
     """
     pessoasFisicas = models.PessoaFisica.objects.all()
 
-    # a requisição é para mudar o telefone ou o nome completo
     if request.method == "POST":
         ID = request.POST["ID"]
 
@@ -70,105 +69,31 @@ def removePF(request):
             })
 
 
-
-
-
-def searchAllPF(request):
-    # # pesquisa todas as pessoas físicas - SQL
-    # sql_query = """
-    # SELECT * FROM gtb_pessoafisica
-    # """
-    # with connection.cursor() as cursor:
-    #     cursor.execute(sql_query)
-    #     pessoasFisicas = cursor.fetchall()
-    # pesquisa todas as pessoas físicas - DJANGO
-    pessoasFisicas = models.PessoaFisica.objects.all()
-    return pessoasFisicas
-
-def searchOnePF(request , user):
-    # # busca o cliente - SQL
-    # sql_query = """ SELECT * FROM gtb_pessoafisica WHERE user_id = %s"""
-
-    # with connection.cursor() as cursor:
-    #     cursor.execute(sql_query, [userClient])
-    #     cliente = cursor.fetchall()   
-
-    # busca o cliente - DJANGO
-    cliente = models.Objects.get(user_id=user)
-    return cliente
-
-def setNamePF(client, name, user):
-    # # Atualiza o nome completo do cliente - SQL
-    # sql_query = """
-    #             UPDATE gtb_pessoafisica
-    #             SET nome_completo = %s
-    #             WHERE user_id = %s
-    #             """
-
-    # with connection.cursor() as cursor:
-    #     cursor.execute(sql_query, [name, user])
-    # connection.commit()
-
-    # Atualiza o nome completo do cliente - django
-    client.nome_completo = name
-    client.save()
-    return 
-
-def setPhonePF(client, phone, user):
-    # # Atualiza o telefone do cliente - SQL
-    # sql_query = """
-    #             UPDATE gtb_pessoafisica
-    #             SET telefone = %s
-    #             WHERE user_id = %s
-    #             """
-
-    # with connection.cursor() as cursor:
-    #     cursor.execute(sql_query, [phone, user])
-    # connection.commit()
-
-    # Atualiza o telefone do cliente - django
-    client.telefone = phone
-    client.save()
-    return 
-def setEmailPF(client, email, user):
-    # # Atualiza o email do cliente - SQL
-    # sql_query = """
-    #             UPDATE gtb_pessoafisica
-    #             SET telefone = %s
-    #             WHERE user_id = %s
-    #             """
-
-    # with connection.cursor() as cursor:
-    #     cursor.execute(sql_query, [email, user])
-    # connection.commit()
-
-    # Atualiza o email do cliente - django
-    client.email = email
-    client.save()
-    return
-
-def deleteClient(cliente, user):
-    # # Apaga a conta do cliente - SQL
-    # sql_query = """
-    #             DELETE FROM gtb_pessoafisica
-    #             WHERE user_id = %s
-    #             """
-    # with connection.cursor() as cursor:
-    #     cursor.execute(sql_query, [email, user])
-    # connection.commit()
-
-    # # Apaga a conta do cliente - DJANGO
-    cliente.delete()
-    return
-
 def renegociarEmprestimoPF(request):
-
+    """Função que renegocia o emprestimo da pessoa física, alterando a data ou o valor do empréstimo"""
     emprestimos = models.Emprestimo.objects.filter(tipo="pf")
     if request.method == "POST":
-        return render(request, "gtb/renegociarEmprestimoPF.html",
-                {
-                    "emprestimos": emprestimos
-                })
+        valor = request.POST["valor"]
+        ID = request.POST["ID"]
+        dias = int(request.POST["data"])
+
+        if ID:
+            emprestimo = models.Emprestimo.objects.get(id=ID)
+            if dias:
+                emprestimo.vencimento += timedelta(days=dias)  
+                emprestimo.save() 
+            if valor:
+                emprestimo.valor = valor
+                emprestimo.save() 
+            messages.success(request, "Emprestimo renegociado com sucesso")
+            return render(request, "gtb/renegociarEmprestimoPF.html",{
+                        "emprestimos": emprestimos
+                    })
+        else:
+            messages.error(request, "Nenhum emprestimo selecionado")
+            return render(request, "gtb/renegociarEmprestimoPF.html",{
+                        "emprestimos": emprestimos
+                    })
     else:
         return render(request, "gtb/renegociarEmprestimoPF.html",{
                 "emprestimos": emprestimos})

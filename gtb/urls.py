@@ -7,6 +7,8 @@ from . import viewGerentePF
 from . import viewGerentePJ
 from . import viewAgencia
 
+# modulo responsável pelas rotas da aplicação
+
 urlpatterns = [
     path("", views.home, name="home"),
     path("login", views.login_view, name="login"),
@@ -46,12 +48,5 @@ urlpatterns = [
     path("alterarGerentes", viewAgencia.alterarGerentes, name="alterarGerentes"),
     path("deletarGerentes", viewAgencia.deletarGerentes, name="deletarGerentes"),
     path("registrarGerentePF", viewAgencia.registrarGerentesPF, name="registrarGerentePF"),
-    path("mostrarClientes", viewAgencia.mostrarClientes, name="mostrarClientes"),
-    
-    # projeto antigo
-    path("<slug:title>/<int:id>/", views.listingPage, name="listingPage"),
-    path("watchlist/", views.watchlist, name="watchlist"),
-    path("my-listings/", views.myListings, name="myListings"),
-    path("closed-listings/", views.closedListings, name="closedListings"),
-    path("categories/", views.categories, name="categories")
+    path("mostrarClientes", viewAgencia.mostrarClientes, name="mostrarClientes")
 ]

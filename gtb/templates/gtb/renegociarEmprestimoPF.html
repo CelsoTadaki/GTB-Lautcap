@@ -15,17 +15,20 @@
                 <h3 class="{{ message.tags }}">{{ message }}</h3>
             {% endfor %}
         {% endif %}
-        <form action="{% url 'atualizarPF' %}" method="post">
+        <form action="{% url 'renegociarEmprestimoPF' %}" method="post">
             <div class="formDiv">
                 {% csrf_token %}
                 <div class="divComprarAcoes">
                 <input class="textoProcurarAcao" type="text" name="ID" placeholder="ID">
-                <input class="textoProcurarAcao" type="text" name="data" placeholder="Nova data">
+                <input class="textoProcurarAcao" type="text" name="data" placeholder="Dias a mais">
+                <input class="textoProcurarAcao" type="number" name="valor" placeholder="Novo Valor">
+                <button class="botaoProcurarAcao" type="submit" name="botaoVenderAcao">Renegociar</button>
             </div>
             <div class="tableDiv">
                 <table>
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>CPF</th>
                             <th>Valor</th>
                             <th>Vencimento</th>
@@ -35,10 +38,11 @@
                     <tbody>
                         {% for emprestimo in emprestimos %}
                             <tr>
+                                <td>{{ emprestimo.id }}</td>
                                 <td>{{ emprestimo.CPF_CNPJ }}</td>
-                                <td>{{ emprestimo.valor }}</td>
-                                <td>R$ {{ emprestimo.vencimento }}</td>
-                                <td>R$ {{ emprestimo.data_de_emprestimo }}</td>
+                                <td>R$ {{ emprestimo.valor }}</td>
+                                <td>{{ emprestimo.vencimento }}</td>
+                                <td>{{ emprestimo.data_de_emprestimo }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

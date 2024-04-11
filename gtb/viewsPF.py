@@ -13,6 +13,7 @@ import requests
 from . import models
 
 def registrarPF(request):
+    """view responsável por registrar a pessoa fisica como o usuário do sistema"""
     if request.method == "POST":
         username = request.POST["username"]
         nome_completo = request.POST["nome_completo"]
@@ -20,7 +21,6 @@ def registrarPF(request):
         telefone = request.POST["telefone"]
         CPF = request.POST["CPF"]
         agenciaID = request.POST["agenciaID"]
-        # Ensure password matches confirmation
         password = request.POST["senha"]
         confirmation = request.POST["confirmacao"]
         if password != confirmation:
@@ -28,9 +28,7 @@ def registrarPF(request):
                 "message": "Senhas não são iguais, tente novamente!"
             })
 
-        # Attempt to create new user
         try:
-            #INSERT INTO gtb_user (password, username, email, is_pessoaFisica, is_active) VALUES (?, ?, ?, ?, ?)
             agencia = models.Agencia.objects.get(id=agenciaID)
             user = models.User.objects.create_user(username=username, 
                                                    email=email, 
@@ -38,7 +36,6 @@ def registrarPF(request):
                                                    is_pessoaFisica=True)
             user.save()
             
-            # INSERT INTO gtb_pessoafisica (user_id, CPF, nome_completo, telefone, saldo_da_conta) VALUES (?, ?, ?, ?, ?)
             pessoa_fisica = models.PessoaFisica.objects.create(user=user,
                                                                CPF=CPF,
                                                                nome_completo=nome_completo,
@@ -60,7 +57,6 @@ def registrarPF(request):
             })
     else:
         agencias = models.Agencia.objects.all()
-        print(agencias, "print do felipe")
         return render(request, "gtb/registrarPF.html", {
                 "agencias": agencias
             })
@@ -68,10 +64,9 @@ def registrarPF(request):
 
 @login_required
 def fazerdepositoPF(request):
+    """"view responsável por fazer o depósito de algum valor na conta da pessoa física"""
     if request.method == "POST":
-        # Getting all info from request.
         valor = request.POST["valor"]
-        # Error handling and some edge cases
         if not valor:
             messages.error(request, "Insira o valor")
             cliente = models.PessoaFisica.objects.get(user=request.user)  
@@ -83,7 +78,6 @@ def fazerdepositoPF(request):
             
         currentUser = request.user
 
-        # Sample raw SQL query
         sql_query = """
         UPDATE gtb_pessoafisica
         SET saldo_da_conta = saldo_da_conta + %s
@@ -94,9 +88,7 @@ def fazerdepositoPF(request):
             cursor.execute(sql_query, [valor, currentUser.id])
 
         connection.commit()
-
         cliente = models.PessoaFisica.objects.get(user=request.user)  
-            
         return render(request, "gtb/depositar.html", {
             "user": request.user,
             "cliente": cliente
@@ -104,7 +96,6 @@ def fazerdepositoPF(request):
 
     else:
         cliente = models.PessoaFisica.objects.get(user=request.user)  
-            
         return render(request, "gtb/depositar.html", {
             "user": request.user,
             "cliente": cliente
@@ -113,31 +104,25 @@ def fazerdepositoPF(request):
 
 @login_required
 def fazersaquePF(request):
+    """ função responsável por fazer o saque de algum valor na conta da pessoa fisica"""
     if request.method == "POST":
-        # Getting all info from request.
         valor = request.POST["valor"]
-        # Error handling and some edge cases
         cliente = models.PessoaFisica.objects.get(user=request.user)  
         if not valor:
             messages.error(request, "Insira o valor")
-            # cliente = models.PessoaFisica.objects.get(user=request.user)  
-            
             return render(request, "gtb/saque.html", {
                 "user": request.user,
                 "cliente": cliente
             })
             
         currentUser = request.user
-
-        # Sample raw SQL query
+        # SQL
         sql_query = """
         UPDATE gtb_pessoafisica
         SET saldo_da_conta = saldo_da_conta - %s
         WHERE user_id = %s
         """
 
-        # ideia do emprestimo: se o saldo é maior que o valor a ser retirado, então ocorre o emprestimo
-        # caso contrario, não pode-se fazer o saque
         if float(valor) <= cliente.saldo_da_conta:
             with connection.cursor() as cursor:
                 messages.success(request, "Saque feito!")
@@ -152,10 +137,8 @@ def fazersaquePF(request):
             "user": request.user,
             "cliente": cliente
         })
-
     else:
         cliente = models.PessoaFisica.objects.get(user=request.user)  
-            
         return render(request, "gtb/saque.html", {
             "user": request.user,
             "cliente": cliente
@@ -164,11 +147,12 @@ def fazersaquePF(request):
         
 @login_required
 def transferenciaPFparaPJ(request):
+    """"função responsável por transferir algum valor da conta 
+        da pessoa fisica para pessoa juridica
+    """
     if request.method == "POST":
-        # Getting all info from request.
         valor = request.POST["valor"]
         CNPJ_dest = request.POST["CNPJ"]
-        # Error handling and some edge cases
         cliente = models.PessoaFisica.objects.get(user=request.user)  
         if not valor:
             messages.error(request, "Insira o valor")
@@ -189,14 +173,13 @@ def transferenciaPFparaPJ(request):
         if float(valor) < cliente.saldo_da_conta:
             if float(valor) > 0.000:
                 currentUser = request.user
-
+                # SQL
                 sql_query_pf = """
                 UPDATE gtb_pessoafisica
                 SET saldo_da_conta = saldo_da_conta - %s
                 WHERE user_id = %s;
                 """
-                
-                # Second SQL query to update PessoaJuridica
+
                 sql_query_pj = """
                 UPDATE gtb_pessoajuridica
                 SET saldo_da_conta = saldo_da_conta + %s
@@ -206,7 +189,6 @@ def transferenciaPFparaPJ(request):
                     INSERT INTO gtb_historicotransferencias (horario, valor, recebeu, tipo_recebe, enviou, tipo_envia)
                     VALUES (%s, %s, %s, %s, %s, %s)
                 """
-                
                 
                 with connection.cursor() as cursor:
                     cursor.execute(sql_query_pf, [valor, currentUser.id])
@@ -243,16 +225,13 @@ def transferenciaPFparaPJ(request):
 
 @login_required
 def transferenciaPFparaPF(request):
+    """função responsável por transferir algum valor da conta da pessoa fisica para pessoa jurídica"""
     if request.method == "POST":
-        # Getting all info from request.
         valor = request.POST["valor"]
         CPF_dest = request.POST["CPF"]
-        # Error handling and some edge cases
         cliente = models.PessoaFisica.objects.get(user=request.user)  
         if not valor:
-
             messages.error(request, "Insira o valor")
-            
             return render(request, "gtb/transferenciaparaPF.html", {
                 "user": request.user,
                 "cliente": cliente
@@ -260,7 +239,6 @@ def transferenciaPFparaPF(request):
         if not CPF_dest:
             messages.error(request, "Insira CPF")
             cliente = models.PessoaFisica.objects.get(user=request.user)  
-            
             return render(request, "gtb/transferenciaparaPF.html", {
                 "user": request.user,
                 "cliente": cliente
@@ -268,14 +246,13 @@ def transferenciaPFparaPF(request):
         if float(valor) < cliente.saldo_da_conta:
             if float(valor) > 0.000:
                 currentUser = request.user
-
+                # SQL
                 sql_query_pf = """
                 UPDATE gtb_pessoafisica
                 SET saldo_da_conta = saldo_da_conta - %s
                 WHERE user_id = %s;
                 """
-                
-                # Second SQL query to update PessoaJuridica
+            
                 sql_query_pj = """
                 UPDATE gtb_pessoafisica
                 SET saldo_da_conta = saldo_da_conta + %s
@@ -318,9 +295,10 @@ def transferenciaPFparaPF(request):
     
 @login_required
 def acoes(request):
+    """função responsável por comprar as ações"""
     user = request.user
     if request.method == "POST":
-        # Getting all info from request.
+        
         if "botaoHome" in request.POST and user.is_authenticated:
             cliente = models.PessoaFisica.objects.get(user=user)  
             return render(request, "gtb/home.html", {
@@ -330,7 +308,6 @@ def acoes(request):
         acao = request.POST["procurarAcao"]
         acaoComprar = request.POST["comprarAcao"]
         quantidade = request.POST["quantidadeAcao"]
-        # Error handling and some edge cases
             
         if "botaoComprarAcao" in request.POST and user.is_authenticated:
             apiCall = requests.get(f'https://brapi.dev/api/quote/list?search={acaoComprar}&token=eJGEyu8vVHctULdVdHYzQd')
@@ -357,13 +334,11 @@ def acoes(request):
                     "acoes": acoes
                 })
             
-             # INSERT INTO gtb_historicocompraevendaacoes (horario, valor, nome_acao, quantidade) VALUES (?, ?, ?, ?)
             acaoComprada = models.HistoricoCompraEVendaAcoes.objects.create(valor=precoTotal, 
                                                                             nome_acao=acoes['stocks'][0]['name'], 
                                                                             quantidade=quantidade, user_id=user.id)
             acaoComprada.save()
             
-             # INSERT INTO gtb_pessoafisica_user_acoes ("pessoafisica_id", "historicocompraevendaacoes_id") VALUES (?, ?)
             cliente.saldo_da_conta = cliente.saldo_da_conta - precoTotal
             cliente.save()
             
@@ -398,9 +373,10 @@ def acoes(request):
     
 @login_required
 def historicoacoes(request):
+    """função responsável pelo histórico das vendas e compras de ações"""
     if request.method == "POST":
         acaoVender = request.POST["venderAcao"]
-        
+        # SQL
         sql_query_pf = """
             SELECT * FROM gtb_historicocompraevendaacoes WHERE user_id = %s
         """
@@ -417,7 +393,6 @@ def historicoacoes(request):
             cursor.execute(sql_reembolso, [acaoVender, acaoVender, request.user.id])
             cursor.execute(sql_delete, [acaoVender])
             cursor.execute(sql_query_pf, [request.user.id])
-            # Fetch all rows from the result
             result_set = cursor.fetchall()
         acoesPesquisa = []
         for row in result_set:
@@ -427,7 +402,6 @@ def historicoacoes(request):
         acoes = []
 
         for pesquisa in acoesPesquisa:
-            # Create a new dictionary for each iteration
             acao_temp = {
                 "nome": pesquisa[2],
                 "valor": pesquisa[4],
@@ -451,7 +425,6 @@ def historicoacoes(request):
 
         with connection.cursor() as cursor:
             cursor.execute(sql_query_pf, [request.user.id])
-            # Fetch all rows from the result
             result_set = cursor.fetchall()
         acoesPesquisa = []
         for row in result_set:
@@ -461,7 +434,6 @@ def historicoacoes(request):
         acoes = []
 
         for pesquisa in acoesPesquisa:
-            # Create a new dictionary for each iteration
             acao_temp = {
                 "nome": pesquisa[2],
                 "valor": pesquisa[4],
@@ -481,6 +453,8 @@ def historicoacoes(request):
 
 @login_required
 def historicotransferencias(request):
+    """"função responsável pelo histórico de transferência das pessoas físicas"""
+    # SQL
     enviou = """
         SELECT * FROM gtb_historicotransferencias WHERE enviou = %s
     """
@@ -507,7 +481,6 @@ def historicotransferencias(request):
         recebeu.append(linha)
 
     for pesquisa in enviou:
-        # Create a new dictionary for each iteration
         acao_temp = {
             "id": pesquisa[0],
             "horario": pesquisa[1],
@@ -515,10 +488,8 @@ def historicotransferencias(request):
             "tipo": "Enviou",
         }
         acoes.append(acao_temp)
-
     
     for pesquisa in recebeu:
-        # Create a new dictionary for each iteration
         acao_temp = {
             "id": pesquisa[0],
             "horario": pesquisa[1],
@@ -536,18 +507,18 @@ def historicotransferencias(request):
     })  
 
 def fazerEmprestimo(request):
-
+    """função responsável por executar o emprestimo realizado pela pessoa física"""
     cliente = models.PessoaFisica.objects.get(user=request.user)
-
     if request.method == "POST":
         valor = request.POST["valor"]
 
         if float(valor) > 0:
+            # SQL
             sql_query_emprestimo ="""
             INSERT INTO gtb_emprestimo (tipo, CPF_CNPJ, valor, vencimento, data_de_emprestimo)
             VALUES (%s, %s, %s, %s, %s)
             """
-            # Sample raw SQL query
+            
             sql_query_deposito = """
             UPDATE gtb_pessoafisica
             SET saldo_da_conta = saldo_da_conta + %s
@@ -571,6 +542,7 @@ def fazerEmprestimo(request):
 
 @login_required
 def mostrarHistoricoEmprestimos(request):
+    """funçãoq que mostra o histórico de emprestimos realizado pela pessoa física"""
     cliente = models.PessoaFisica.objects.get(user=request.user)
     emprestimos = models.Emprestimo.objects.filter(CPF_CNPJ=cliente.CPF)
     for emprestimo in emprestimos:
@@ -580,3 +552,4 @@ def mostrarHistoricoEmprestimos(request):
         "user": request.user,
         "emprestimos": emprestimos
     })
+

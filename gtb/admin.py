@@ -1,6 +1,7 @@
 from django.contrib import admin
 from . models import *
 
+# banco de dados modeladoa pelo grupo
 admin.site.register(User)
 admin.site.register(PessoaFisica)
 admin.site.register(PessoaJuridica)

@@ -1,20 +1,16 @@
 {% extends "gtb/layout.html" %}
 {% load filter %}
 {% load static %}
-
 {% block title %}Mudar PF{% endblock %}
-
 {% block head %}
     <link href="{% static 'gtb/acoes.css' %}" rel="stylesheet">
 {% endblock %}
-
 {% block body %}
     {% if messages %}
         {% for message in messages %}
             <h3 class="{{ message.tags }}">{{ message }}</h3>
         {% endfor %}
     {% endif %}
-
     <form action="{% url 'atualizarPF' %}" method="post">
         <div class="formDiv">
             {% csrf_token %}
@@ -54,5 +50,4 @@
             </div>
         </div>
     </form>
-
 {% endblock %}
