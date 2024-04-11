@@ -19,7 +19,7 @@
                 Seu telefone é: {{ cliente.telefone }} <br>
                 Seu email é: {{ user.email }} <br>
             </div>
-        {% else %}
+        {% elif user.is_pessoaFisica %}
             <div class="info">
                 <p>Olá, <b>{{ cliente.nome_da_empresa }}</b>!<br>
                 Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
@@ -33,9 +33,11 @@
                 Seu telefone é: {{ cliente.telefone }} <br>
                 Seu email é: {{ user.email }} <br>
             </div>
+        {% elif user.is_gerentePF %}
+            <p>Olá, Gerente <b>{{ cliente.CPF }}</b>!<br> 
+        {% else %}
+            <p>Olá, Agência da Cidade <b>{{ cliente.cidade }}</b>!<br>
         {% endif %}
-    {% else %}
-       
     {% endif %}
 
 

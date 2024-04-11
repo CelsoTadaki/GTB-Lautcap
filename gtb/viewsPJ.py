@@ -32,12 +32,14 @@ def registrarPJ(request):
 
         # Attempt to create new user
         try:
+            # INSERT INTO gtb_user (password, username, email, is_pessoaFisica, is_active) VALUES (?, ?, ?, ?, ?)
             user = models.User.objects.create_user(username=username, 
                                                    email=email, 
                                                    password=password,
                                                    is_pessoaJuridica=True)
             user.save()
             
+            # INSERT INTO gtb_pessoajuridica (user_id, CNPJ, nome_da_empresa, telefone, setor, saldo_da_conta) VALUES (?, ?, ?, ?, ?, ?)
             pessoa_juridica = models.PessoaJuridica.objects.create(user=user,
                                                                    CNPJ=CNPJ,
                                                                    nome_da_empresa=nome_da_empresa,

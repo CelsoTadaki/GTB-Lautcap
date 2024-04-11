@@ -31,12 +31,14 @@ def registrarPF(request):
 
         # Attempt to create new user
         try:
+            #INSERT INTO gtb_user (password, username, email, is_pessoaFisica, is_active) VALUES (?, ?, ?, ?, ?)
             user = models.User.objects.create_user(username=username, 
                                                    email=email, 
                                                    password=password,
                                                    is_pessoaFisica=True)
             user.save()
             
+            # INSERT INTO gtb_pessoafisica (user_id, CPF, nome_completo, telefone, saldo_da_conta) VALUES (?, ?, ?, ?, ?)
             pessoa_fisica = models.PessoaFisica.objects.create(user=user,
                                                                CPF=CPF,
                                                                nome_completo=nome_completo,
@@ -329,10 +331,13 @@ def acoes(request):
                     "acoes": acoes
                 })
             
+             # INSERT INTO gtb_historicocompraevendaacoes (horario, valor, nome_acao, quantidade) VALUES (?, ?, ?, ?)
             acaoComprada = models.HistoricoCompraEVendaAcoes.objects.create(valor=precoTotal, 
                                                                             nome_acao=acoes['stocks'][0]['name'], 
                                                                             quantidade=quantidade, user_id=user.id)
             acaoComprada.save()
+            
+             # INSERT INTO gtb_pessoafisica_user_acoes ("pessoafisica_id", "historicocompraevendaacoes_id") VALUES (?, ?)
             cliente.saldo_da_conta = cliente.saldo_da_conta - precoTotal
             cliente.save()
             

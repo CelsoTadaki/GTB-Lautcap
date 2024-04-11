@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 class User(AbstractUser):
     is_pessoaFisica = models.BooleanField(default=False)
     is_pessoaJuridica = models.BooleanField(default=False)
+    is_agencia = models.BooleanField(default=False)
+    is_gerentePF = models.BooleanField(default=False)
     def __str__(self):
         return f"{self.username}"
 
@@ -46,12 +48,14 @@ class Emprestimo(models.Model):
 
 class Agencia(models.Model):
     """Classe destinada a entidade agência"""
+    user   = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     cidade = models.CharField(max_length=15, null=False, blank=False)
     def __str__(self):
-        return f"{self.id}"
+        return f"{self.cidade}"
 
 class GerentePF(models.Model):
     """Classe destinada a entidade gerente pessoa física"""
+    user            = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     CPF             = models.CharField(max_length=11, null=False, blank=False)
     nome_completo   = models.CharField(max_length=64, null=False, blank=False)
     agencia_id      = models.ForeignKey(Agencia, on_delete=models.CASCADE)
@@ -61,6 +65,7 @@ class GerentePF(models.Model):
 
 class GerentePJ(models.Model):
     """Classe destinada a entidade gerente pessoa jurídica"""
+    user            = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     CPF              = models.CharField(max_length=11, null=False, blank=False)
     nome_completo    = models.CharField(max_length=64, null=False, blank=False)
     empresa_atendida = models.CharField(max_length=64, null=False, blank=False)

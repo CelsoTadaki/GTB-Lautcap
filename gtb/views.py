@@ -26,14 +26,18 @@ def login_view(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
-
+        
         # Check if authentication successful
         if user is not None:
             login(request, user)
             if user.is_pessoaFisica:
                 cliente = models.PessoaFisica.objects.get(user=user)   
-            else:
+            elif user.is_pessoaJuridica:
                 cliente = models.PessoaJuridica.objects.get(user=user) 
+            elif user.is_agencia:
+                cliente = models.Agencia.objects.get(user=user)
+            else:
+                cliente = models.GerentePF.objects.get(user=user)
             return render(request, "gtb/home.html", {
                 "user": user,
                 "cliente": cliente

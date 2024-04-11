@@ -20,18 +20,18 @@
             <div class="infoAcoes">
                 {% if user.is_pessoaFisica %}
                     <a href="{% url 'fazerdepositoPF' %}">Fazer depósito</a>
-                {% else %}
+                {% elif user.is_pessoaJuridica %}
                     <a href="{% url 'fazerdepositoPJ' %}">Fazer depósito</a>
                 {% endif %}
                 {% if user.is_pessoaFisica %}
                     <a href="{% url 'fazersaquePF' %}">Fazer saque</a>
-                {% else %}
+                {% elif user.is_pessoaJuridica%}
                     <a href="{% url 'fazersaquePJ' %}">Fazer saque</a>
                 {% endif %}
                 {% if user.is_pessoaFisica %}
                     <a href="{% url 'transferenciaPFparaPJ' %}">Transferência para PJ</a>
                     <a href="{% url 'transferenciaPFparaPF' %}">Transferência para PF</a>
-                {% else %}
+                {% elif user.is_pessoaJuridica%}
                     <a href="{% url 'transferenciaPJparaPJ' %}">Transferência para PJ</a>
                     <a href="{% url 'transferenciaPJparaPF' %}">Transferência para PF</a>
                 {% endif %}
@@ -39,9 +39,19 @@
                     <a href="{% url 'acoes' %}">Ações</a>
                     <a href="{% url 'historicoacoes' %}">Minhas Ações</a>
                     <a href="{% url 'historicotransferenciasPF' %}">Transferências</a>
-                {% else %}
+                {% elif user.is_pessoaJuridica%}
                     <a href="{% url 'historicotransferenciasPJ' %}">Transferências</a>
                 {% endif %}
+
+                {% if user.is_agencia %}
+                    <a href="{% url 'alterarGerentes' %}">Alterar Gerentes</a>
+                    {% comment %} <a href="{% url 'verificaClientes' %}"></a> {% endcomment %}
+                {% endif %}
+                {% if user.is_gerentePF %}
+                    <a href="{% url 'atualizarPF' %}">Alterar PF</a>
+                {% endif %}
+                
+
                 <a href="{% url 'home' %}">Home</a>
                 <a href="{% url 'logout' %}">Log Out</a>
             </div>

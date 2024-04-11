@@ -50,9 +50,46 @@
 .formDiv {
     width: 80vw;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
+}
+
+.divSelecionarGerente {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.divSelecionarGerente {
+    width: auto;
+    gap: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.botaoProcurarGerente {
+    background-color: #195ab4;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 30px;
+    font-size: 16px;
+}
+
+.gerentesDropDown {
+    background-color: #e9e9ed;
+    color: black;
+    border-radius: 5px;
+    border: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 30px;
+    font-size: 16px;
 }
 
 .botoesAcoes {

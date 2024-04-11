@@ -3,6 +3,8 @@ from django.urls import path
 from . import views
 from . import viewsPF
 from . import viewsPJ
+from . import viewGerentePF
+from . import viewAgencia
 
 urlpatterns = [
     path("", views.home, name="home"),
@@ -28,7 +30,11 @@ urlpatterns = [
     path("transferenciaPJparaPF", viewsPJ.transferenciaPJparaPF, name="transferenciaPJparaPF"),
     path("transferenciaPJparaPJ", viewsPJ.transferenciaPJparaPJ, name="transferenciaPJparaPJ"),
     
+    # Gerente
+    path("changePF", viewGerentePF.changePF, name="atualizarPF"),
     
+    # Agencia
+    path("alterarGerentes", viewAgencia.alterarGerentes, name="alterarGerentes"),
     
     
     # projeto antigo
