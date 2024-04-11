@@ -34,7 +34,9 @@
                 Seu email é: {{ user.email }} <br>
             </div>
         {% elif user.is_gerentePF %}
-            <p>Olá, Gerente <b>{{ cliente.CPF }}</b>!<br> 
+            <p>Olá, Gerente de PF <b>{{ cliente.CPF }}</b>!<br> 
+        {% elif user.is_gerentePJ %}
+            <p>Olá, Gerente de PJ <b>{{ cliente.CPF }}</b>!<br> 
         {% else %}
             <p>Olá, Agência da Cidade <b>{{ cliente.cidade }}</b>!<br>
         {% endif %}

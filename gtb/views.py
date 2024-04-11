@@ -36,8 +36,10 @@ def login_view(request):
                 cliente = models.PessoaJuridica.objects.get(user=user) 
             elif user.is_agencia:
                 cliente = models.Agencia.objects.get(user=user)
-            else:
+            elif user.is_gerentePF:
                 cliente = models.GerentePF.objects.get(user=user)
+            else:
+                cliente = models.GerentePJ.objects.get(user=user)
             return render(request, "gtb/home.html", {
                 "user": user,
                 "cliente": cliente

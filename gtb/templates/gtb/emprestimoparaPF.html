@@ -5,21 +5,19 @@
 {% block title %}GTB Lautpac{% endblock %}
 
 
-
 {% block body %}
-    {% if messages %}
-        {% for message in messages %}
-            <h3 class="{{ message.tags }}">{{ message }}</h3>
-        {% endfor %}
-    {% endif %}
-    
-    {% if cliente or user.is_authenticated %}
-        {% if user.is_pessoaFisica %}
+    <form action="{% url 'emprestimoparaPF' %}" method="post">
             <div class="info">
-                <p>Olá, <b>{{ cliente.nome_completo }}</b>!<br>
-                Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
-                <p> Você é uma Pessoa Física </p>
+                <p>Olá, <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
+                <p> Você deseja fazer um empréstimo de quantos reais? </p>
             </div>
+            <div class="divComprarAcoes">
+                <input class="textoProcurarAcao" type="text" name="comprarAcao" placeholder="Nome do Ticker">
+                <input class="textoQuantidadeAcao" type="number" name="quantidadeAcao" placeholder="Quantidade">
+                <button class="botaoProcurarAcao" type="submit" name="botaoComprarAcao">Comprar</button>
+            </div>
+
+
             <div class="info">
                 <h2>Seus dados</h2>
                 Seu CPF é: {{ cliente.CPF }} <br>
@@ -27,33 +25,35 @@
                 Seu email é: {{ user.email }} <br>
             </div>
             <div class="info">
-                <h2>Saque</h2>
-                <form action="{% url 'fazersaquePF' %}" method="post">
+                <h2>Transferencia</h2>
+                <form action="{% url 'transferenciaPFparaPF' %}" method="post">
                     {% csrf_token %}
                     <div>
                         <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
+                        <input class="bidInput" type="text" name="CPF" placeholder="CPF">
                     </div>
                     <div class="button">
-                        <button type="submit">Sacar</button>
+                        <button type="submit">Transferir</button>
                     <div>
                 </form>
             </div>
         {% else %}
-                
+
             <div class="info">
                 <p>Olá, <b>{{ cliente.nome_da_empresa }}</b>!<br>
                 Seu saldo é <b>R${{ cliente.saldo_da_conta }}</b>  <br></p>
                 <p> Você é uma Pessoa Jurídica </p>
             </div>
             <div class="info">
-                <h2>Saque</h2>
-                <form action="{% url 'fazersaquePJ' %}" method="post">
+                <h2>Transferencia</h2>
+                <form action="{% url 'transferenciaPJparaPF' %}" method="post">
                     {% csrf_token %}
                     <div>
                         <input class="bidInput" type="number" name="valor" placeholder="Valor (R$)">
+                        <input class="bidInput" type="text" name="CPF" placeholder="CPF">
                     </div>
                     <div class="button">
-                        <button type="submit">Sacar</button>
+                        <button type="submit">Transferir</button>
                     <div>
                 </form>
             </div>

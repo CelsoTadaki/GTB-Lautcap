@@ -7,6 +7,7 @@ class User(AbstractUser):
     is_pessoaJuridica = models.BooleanField(default=False)
     is_agencia = models.BooleanField(default=False)
     is_gerentePF = models.BooleanField(default=False)
+    is_gerentePJ = models.BooleanField(default=False)
     def __str__(self):
         return f"{self.username}"
 
@@ -51,7 +52,7 @@ class Agencia(models.Model):
     user   = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     cidade = models.CharField(max_length=15, null=False, blank=False)
     def __str__(self):
-        return f"{self.cidade}"
+        return f"{self.id} - {self.cidade}"
 
 class GerentePF(models.Model):
     """Classe destinada a entidade gerente pessoa física"""
@@ -61,7 +62,7 @@ class GerentePF(models.Model):
     agencia_id      = models.ForeignKey(Agencia, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.CPF}"
+        return f"{self.CPF} - {self.agencia_id}"
 
 class GerentePJ(models.Model):
     """Classe destinada a entidade gerente pessoa jurídica"""
@@ -80,7 +81,6 @@ class HistoricoCompraEVendaAcoes(models.Model):
     nome_acao  = models.CharField(max_length=64, null=False, blank=False)
     quantidade = models.IntegerField(default=0, null=False, blank=False) 
     user_id    = models.PositiveIntegerField(null=True)
-
 
     def __str__(self):
         return f"{self.nome_acao}"

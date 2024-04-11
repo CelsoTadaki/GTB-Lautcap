@@ -25,6 +25,7 @@
                 {% endif %}
                 {% if user.is_pessoaFisica %}
                     <a href="{% url 'fazersaquePF' %}">Fazer saque</a>
+                    {% comment %} <a href="{% url 'fazerEmprestimoPF' %}">Fazer Empréstimo</a> {% endcomment %}
                 {% elif user.is_pessoaJuridica%}
                     <a href="{% url 'fazersaquePJ' %}">Fazer saque</a>
                 {% endif %}
@@ -50,6 +51,11 @@
                 {% if user.is_gerentePF %}
                     <a href="{% url 'atualizarPF' %}">Alterar PF</a>
                     <a href="{% url 'removePF' %}">Remover PF</a>
+                {% endif %}
+
+                {% if user.is_gerentePJ %}
+                    <a href="{% url 'atualizarPJ' %}">Alterar PJ</a>
+                    <a href="{% url 'removePJ' %}">Remover PJ</a>
                 {% endif %}
                 
 

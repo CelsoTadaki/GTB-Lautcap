@@ -16,25 +16,24 @@ from . import models
 @login_required
 def alterarGerentes(request):
     user = request.user
-    cliente = models.Agencia.objects.get(user=user)
     if request.method == "POST":
         gerentePFID = request.POST["gerentePF"]
-        gerentePJID = request.POST["gerentePJ"]
         
-        dados_gerentePF = models.GerentePF.objects.get(id=gerentePFID)
-        dados_gerentePJ = models.GerentePJ.objects.get(id=gerentePJID)
-        
-        
+        try:
+            dados_gerentePF = models.GerentePF.objects.get(id=gerentePFID)
+        except:
+            dados_gerentePF = None
             
+            
+        return render(request, "gtb/alterarGerentes.html", {
+            "metodo": "post",
+            "dados_gerentePF": dados_gerentePF
+        })
 
     else:
-        gerentesPF = models.GerentePF.objects.all()
-        gerentesPJ = models.GerentePJ.objects.all()
-        
+        gerentesPF = models.GerentePF.objects.filter(agencia_id=user)
+        print(models.GerentePF.objects.filter(agencia_id=user.id), "print do felipe", user.id)
         return render(request, "gtb/alterarGerentes.html", {
             "metodo": "get",
-            "user": user,
-            "cliente": cliente,
-            "gerentesPF": gerentesPF,
-            "gerentesPJ": gerentesPJ
+            "gerentesPF": gerentesPF
         })

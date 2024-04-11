@@ -1,0 +1,61 @@
+{% extends "gtb/layout.html" %}
+{% load filter %}
+{% load static %}
+
+{% block title %}Mudar PJ{% endblock %}
+
+{% block head %}
+    <link href="{% static 'gtb/acoes.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="{{ message.tags }}">{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+
+    <form action="{% url 'atualizarPJ' %}" method="post">
+        <div class="formDiv">
+            {% csrf_token %}
+            <div class="divComprarAcoes">
+                <input class="textoProcurarAcao" type="text" name="ID" placeholder="ID">
+                <input class="textoProcurarAcao" type="text" name="CNPJ" placeholder="Novo CNPJ">
+                <input class="textoProcurarAcao" type="text" name="nome_completo" placeholder="Novo nome da empresa">
+                <input class="textoProcurarAcao" type="text" name="setor" placeholder="Novo setor">
+                <input class="textoProcurarAcao" type="text" name="telefone" placeholder="Novo telefone">
+                <input class="textoProcurarAcao" type="text" name="email" placeholder="Novo e-mail">
+                <button class="botaoProcurarAcao" type="submit" name="botaoVenderAcao">Atualizar</button>
+            </div>
+            <div class="tableDiv">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>CNPJ</th>
+                            <th>Empresa</th>
+                            <th>Setor</th>
+                            <th>Telefone</th>
+                            <th>E-mail</th>
+                            <th>Saldo da conta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pj in pessoasJuridicas %}
+                            <tr>
+                                <td>{{ pj.user_id }}</td>
+                                <td>{{ pj.CNPJ }}</td>
+                                <td>{{ pj.nome_da_empresa }}</td>
+                                <td>{{ pj.setor }}</td>
+                                <td>{{ pj.telefone }}</td>
+                                <td>{{ pj.user.email }}</td>
+                                <td>R$ {{ pj.saldo_da_conta }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

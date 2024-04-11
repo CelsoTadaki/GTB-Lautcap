@@ -4,6 +4,7 @@ from . import views
 from . import viewsPF
 from . import viewsPJ
 from . import viewGerentePF
+from . import viewGerentePJ
 from . import viewAgencia
 
 urlpatterns = [
@@ -22,6 +23,7 @@ urlpatterns = [
     path("historicoacoes", viewsPF.historicoacoes, name="historicoacoes"),
     path("historicotransferenciasPF", viewsPF.historicotransferencias, name="historicotransferenciasPF"),
     path("historicotransferenciasPJ", viewsPJ.historicotransferencias, name="historicotransferenciasPJ"),
+    # path("emprestimoparaPF", viewsPF.fazerEmprestimoPF, name="emprestimoparaPF"),
     
     # Pessoa Juridica
     path("registrar_pessoa_juridica", viewsPJ.registrarPJ, name="registrarPJ"),
@@ -30,9 +32,13 @@ urlpatterns = [
     path("transferenciaPJparaPF", viewsPJ.transferenciaPJparaPF, name="transferenciaPJparaPF"),
     path("transferenciaPJparaPJ", viewsPJ.transferenciaPJparaPJ, name="transferenciaPJparaPJ"),
     
-    # Gerente
+    # Gerente PF
     path("changePF", viewGerentePF.changePF, name="atualizarPF"),
     path("removePF", viewGerentePF.removePF, name="removePF"),
+    
+    # Gerente PJ
+    path("changePJ", viewGerentePJ.changePJ, name="atualizarPJ"),
+    path("removePJ", viewGerentePJ.removePJ, name="removePJ"),
     
     # Agencia
     path("alterarGerentes", viewAgencia.alterarGerentes, name="alterarGerentes"),

@@ -109,9 +109,10 @@ def fazersaquePF(request):
         # Getting all info from request.
         valor = request.POST["valor"]
         # Error handling and some edge cases
+        cliente = models.PessoaFisica.objects.get(user=request.user)  
         if not valor:
             messages.error(request, "Insira o valor")
-            cliente = models.PessoaFisica.objects.get(user=request.user)  
+            # cliente = models.PessoaFisica.objects.get(user=request.user)  
             
             return render(request, "gtb/saque.html", {
                 "user": request.user,
@@ -127,13 +128,18 @@ def fazersaquePF(request):
         WHERE user_id = %s
         """
 
-        with connection.cursor() as cursor:
-            cursor.execute(sql_query, [valor, currentUser.id])
-
-        connection.commit()
+        # ideia do emprestimo: se o saldo é maior que o valor a ser retirado, então ocorre o emprestimo
+        # caso contrario, não pode-se fazer o saque
+        if float(valor) <= cliente.saldo_da_conta:
+            with connection.cursor() as cursor:
+                messages.success(request, "Saque feito!")
+                cursor.execute(sql_query, [valor, currentUser.id])
+            connection.commit()
+        else:
+            messages.error(request, "Saldo insuficiente! Faça um empréstimo!")
 
         cliente = models.PessoaFisica.objects.get(user=request.user)  
-            
+        
         return render(request, "gtb/saque.html", {
             "user": request.user,
             "cliente": cliente
@@ -348,8 +354,6 @@ def acoes(request):
                 "acoes": acoes
             })
             
-            
-            
         cliente = models.PessoaFisica.objects.get(user=user)  
         apiCall = requests.get(f'https://brapi.dev/api/quote/list?search={acao}&token=eJGEyu8vVHctULdVdHYzQd')
         acoes = apiCall.json()
@@ -507,3 +511,10 @@ def historicotransferencias(request):
         "cliente": cliente,
         "acoes": acoes
     })  
+
+
+
+    # def fazerEmprestimo(request):
+
+
+

@@ -18,34 +18,56 @@
     <form action="{% url 'alterarGerentes' %}" method="post">
         <div class="formDivAlterarGerente">
             {% csrf_token %}
-            {% if metodo == 'get' %}
-                <div class="divSelecionarGerente">
-                    <select name="gerentePF" class="gerentesPFDropDown" >
-                        <option selected="selected">Selecione um Gerente</option>
-                            
-                        {% for gerente in gerentesPF %}
-                            <option value="{{ gerente.id }}">{{ gerente.nome_completo }}</option>
-                        {% endfor %}
-                    </select>
 
-                    <select name="gerentePJ" class="gerentesPJDropDown" >
-                        <option selected="selected">Selecione um Gerente</option>
-                            
-                        {% for gerente in gerentesPJ %}
-                            <option value="{{ gerente.id }}">{{ gerente.nome_completo }}</option>
-                        {% endfor %}
-                    </select>
-                    <button class="botaoProcurarGerente" type="submit" name="selecionarGerente">Selecionar</button>
-                </div>
-            {% else %}
-                
-            {% endif %}
-                <div class="botaoHomeDiv">
-                    <a href="{% url 'home' %}">
-                        <input class="botaoHome" type="submit" value="Home" name="botaoHome">
-                    </a>
-                </div>
+            <div class="divSelecionarGerente">
+                <select name="gerentePF" class="gerentesPFDropDown" >
+                    <option selected="selected">Selecione um Gerente</option>
+                        
+                    {% for gerente in gerentesPF %}
+                        <option value="{{ gerente.id }}">{{ gerente.nome_completo }}</option>
+                    {% endfor %}
+                </select>
+
+                <button class="botaoProcurarGerente" type="submit" name="selecionarGerente">Selecionar</button>
+            </div>
+
+            
+            <div class="botaoHomeDiv">
+                <a href="{% url 'home' %}">
+                    <input class="botaoHome" type="submit" value="Home" name="botaoHome">
+                </a>
+            </div>
         </div>
+
+        {% if dados_gerentePF %}
+            {{ dados_gerentePF.nome_completo }} <br>
+            {{ dados_gerentePF.user.email }} <br>
+            {{ dados_gerentePF.agencia_id.cidade }}
+        
+
+            <div class="tableDiv">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>CPF</th>
+                            <th>Agencia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dadosVar in dados_gerentePF %}
+                            <tr>
+                                <td>{{ dadosVar.nome_completo }}</td>
+                                <td>{{ dadosVar.user.email }}</td>
+                                <td>{{ dadosVar.CPF }}</td>
+                                <td>{{ dadosVar.agencia_id }} - {{ dadosVar.agencia_id }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
     </form>
 
 {% endblock %}
